@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AxFiles — KMS (MVP)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f1f1f1;
+      --panel: #c8d8e6;
+      --muted: #737883;
+      --ink: #000000;
+      --accent-blue: #2563eb;
+      --link: #23a4f2;
+      --accent-purple: #5b21b6;
+      --accent-orange: #ea580c;
+      --border: rgba(0, 0, 0, 0.1);
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      /* Ховер: нейтральное затемнение от текущего фона / цвета ссылки (без голубого «подсвета») */
+      --hover-white: color-mix(in srgb, #ffffff 94%, #000000);
+      --hover-bg-page: color-mix(in srgb, var(--bg) 93%, #000000);
+      --hover-link: color-mix(in srgb, var(--link) 82%, #000000);
+      --hover-on-panel: color-mix(in srgb, var(--panel) 90%, #000000);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --radius: 12px;
+      --e: 8px;
+      --font-heading: Geologica, system-ui, -apple-system, sans-serif;
+      --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    h1, h2, h3, .font-heading { font-family: var(--font-heading); }
+
+    /*
+      Гиперссылки в #views: #23A4F2; при hover — чуть темнее того же тона + подчёркивание; :visited = :link.
+      Сайдбар .nav: активный пункт — цвет ссылки и жирный шрифт.
+    */
+    #views a:not(.cta-card):not(.btn):not(.doc-create) {
+      color: var(--link);
+    }
+    #views a:not(.cta-card):not(.btn):not(.doc-create):visited,
+    #views a:not(.cta-card):not(.btn):not(.doc-create):link {
+      color: var(--link);
+    }
+    #views a:not(.cta-card):not(.btn):not(.doc-create):hover {
+      color: var(--hover-link);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    #views a:not(.cta-card):not(.btn):not(.doc-create):active {
+      color: var(--link);
+    }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 24px 20px 40px; }
+
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .logo {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      background: var(--panel);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      color: inherit;
+    }
+    .logo span { color: var(--muted); font-weight: 400; }
+    .logo:hover {
+      filter: brightness(0.96);
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 220px;
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+    .search-wrap input[type="search"] {
+      flex: 1;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 0 12px 0 40px;
+      font: inherit;
+      box-shadow: var(--shadow-sm);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%23737883' stroke-width='1.5'%3E%3Ccircle cx='8' cy='8' r='5.5'/%3E%3Cpath d='M12 12l4 4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 12px center;
+    }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-wrap input[type="search"]:hover {
+      background-color: var(--hover-white);
+    }
+    .search-wrap-page {
+      width: 100%;
+      margin: 0 0 4px;
+    }
+    /* После удаления подзаголовка: тот же визуальный шаг от .section-title, что был у .section-title + .section-note */
+    .section-title + .search-ai-banner {
+      margin-top: 1.25rem;
+    }
+    .search-ai-banner {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(35, 164, 242, 0.35);
+      background: linear-gradient(110deg, rgba(35, 164, 242, 0.14) 0%, rgba(200, 216, 230, 0.45) 55%, #fff 100%);
+      box-shadow: var(--shadow-sm);
+    }
+    .search-ai-banner img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .search-ai-banner strong {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .search-ai-banner .micro {
+      margin: 4px 0 0;
+      color: var(--ink);
+    }
+    .btn {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: var(--radius);
+      border: 1px solid #000000;
+      padding: 0 14px;
+      height: 40px;
+      cursor: pointer;
+      background: #000000;
+      color: #ffffff;
+      white-space: nowrap;
+      transition: filter 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+    }
+    .btn:hover {
+      filter: brightness(1.14);
+    }
+    .btn.secondary {
+      background: #ffffff;
+      color: #000000;
+      border: 1px solid #000000;
+    }
+    .btn.secondary:hover {
+      background: var(--hover-white);
+      filter: none;
+    }
+    .btn.ghost {
+      background: transparent;
+      color: var(--link);
+      border: none;
+      padding: 0 8px;
+      height: auto;
+      font-size: 14px;
+    }
+    .btn.ghost:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--hover-link);
+      filter: none;
+    }
+    a.btn,
+    a.btn:visited,
+    a.btn:link {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    a.btn.secondary,
+    a.btn.secondary:visited,
+    a.btn.secondary:link {
+      color: #000000;
+    }
+    a.btn:hover {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    a.btn.secondary:hover {
+      color: #000000;
+    }
+    .icons { display: flex; gap: 8px; }
+    .icon-slot {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      padding: 0;
+    }
+    .icon-slot svg { width: 22px; height: 22px; }
+    .icon-slot img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+    .icon-slot:hover {
+      background: var(--hover-white);
+    }
+
+    :root {
+      --nav-pad-block: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: auto 1fr;
+      column-gap: 24px;
+      row-gap: 0;
+      align-items: start;
+    }
+    .app-crumbs {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+    .nav {
+      grid-column: 1;
+      grid-row: 2;
+      position: sticky;
+      top: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--nav-pad-block);
+      background: #fff;
+      box-shadow: var(--shadow-card);
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+    .nav h3 {
+      margin: 14px 0 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: var(--font-heading);
+    }
+    .nav h3:first-child { margin-top: 0; }
+    .nav ul { list-style: none; margin: 0; padding: 0; }
+    .nav a {
+      display: block;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 14px;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background-color 0.12s ease, color 0.12s ease;
+    }
+    .nav a,
+    .nav a:visited,
+    .nav a:link {
+      color: var(--muted);
+    }
+    .nav a:hover:not(.active) {
+      color: var(--ink);
+      background: var(--hover-white);
+    }
+    .nav a.active {
+      color: var(--link);
+      font-weight: 700;
+      font-family: var(--font-heading);
+    }
+    .nav a.active:visited,
+    .nav a.active:link {
+      color: var(--link);
+    }
+    .nav a.active:hover {
+      color: var(--hover-link);
+      text-decoration: none;
+      background: var(--hover-white);
+    }
+
+    .main {
+      grid-column: 2;
+      grid-row: 2;
+      min-height: 360px;
+    }
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+      }
+      .app-crumbs {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .nav {
+        grid-column: 1;
+        grid-row: 2;
+        position: relative !important;
+        top: 0 !important;
+        max-height: none !important;
+      }
+      .main {
+        grid-column: 1;
+        grid-row: 3;
+      }
+    }
+
+    .view { display: none; flex-direction: column; gap: 16px; align-items: stretch; }
+    .view.is-active { display: flex; }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: #fff;
+      box-shadow: var(--shadow-card);
+    }
+
+    .crumbs {
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--muted);
+      margin: 0 0 4px;
+    }
+    .crumbs a {
+      text-decoration: none;
+      color: var(--link);
+    }
+    .crumbs a:visited,
+    .crumbs a:link {
+      color: var(--link);
+    }
+    .crumbs a:hover {
+      color: var(--hover-link);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .crumbs span { color: var(--ink); }
+    .crumbs.app-crumbs {
+      margin: 0 0 16px;
+    }
+
+    /* Заголовок раздела: Geologica Bold 22 · чёрный */
+    .section-title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    /*
+      Подзаголовок / «шрифт уведомлений» по гайду AxFiles:
+      Regular, чёрный, основной стек шрифта; компактный отступ от заголовка.
+    */
+    .section-note {
+      margin: 0 0 16px;
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--ink);
+      font-family: var(--font-body);
+    }
+    .section-title + .section-note {
+      margin-top: 0.5rem;
+    }
+    .section-title + .profile-head {
+      margin-top: 0.5rem;
+    }
+    .section-note.muted {
+      color: var(--muted);
+    }
+
+    /* Вторичный заголовок внутри карточки (18 / Bold) — единый класс по всему файлу */
+    .panel-title {
+      margin: 0;
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+    .panel-title + .section-note,
+    .panel-title + .micro,
+    .panel-title + .list,
+    .panel-title + .chat-mock,
+    .panel-title + table.data {
+      margin-top: 0.5rem;
+    }
+    .micro { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+
+    .cta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    a.cta-card {
+      display: block;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.12s ease, filter 0.12s ease;
+    }
+    a.cta-card:hover {
+      border-color: var(--border);
+      box-shadow: var(--shadow-card);
+      background-color: var(--hover-white);
+    }
+    .cta-card strong { display: block; font-family: var(--font-heading); font-size: 15px; margin-bottom: 6px; }
+    .cta-card span { font-size: 13px; color: var(--muted); }
+
+    a.doc-create {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+    }
+    #views a.doc-create,
+    #views a.doc-create:visited,
+    #views a.doc-create:link {
+      color: var(--ink);
+    }
+    #views a.doc-create:hover {
+      background: var(--hover-white);
+      color: var(--ink);
+      text-decoration: none;
+      border-color: var(--muted);
+    }
+    a.doc-create img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .search-filters-details {
+      margin: 16px 0 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .search-filters-details summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      user-select: none;
+      position: relative;
+      border-radius: var(--radius);
+      transition: background-color 0.12s ease;
+    }
+    .search-filters-details summary:hover {
+      background: var(--hover-white);
+    }
+    .search-filters-details summary::-webkit-details-marker {
+      display: none;
+    }
+    .search-filters-details summary::after {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid var(--muted);
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+    .search-filters-details[open] summary::after {
+      transform: rotate(180deg);
+    }
+    .search-filters-details .search-filters-summary-hint {
+      display: block;
+      margin-top: 4px;
+      font-weight: 400;
+      font-size: 13px;
+      color: var(--muted);
+      font-family: var(--font-body);
+    }
+    .search-filters-details summary .search-filters-summary-stack {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .search-filters-summary-title {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .search-filters-details .filter-row {
+      margin: 0;
+      padding: 0 14px 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .filter-row .lbl {
+      width: 100%;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: var(--font-heading);
+    }
+    select.faux {
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 0 10px;
+      font: inherit;
+      background: #fff;
+      cursor: pointer;
+      transition: background-color 0.12s ease;
+    }
+    select.faux:hover {
+      background: var(--hover-white);
+    }
+
+    table.data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    table.data th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-heading);
+    }
+    table.data td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+    table.data tr:last-child td { border-bottom: 0; }
+    table.data a {
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--link);
+    }
+    table.data a:visited,
+    table.data a:link {
+      color: var(--link);
+    }
+    table.data a:hover {
+      color: var(--hover-link);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--muted);
+      border: 1px solid var(--border-subtle);
+    }
+    .badge-pill.ok { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .badge-pill.warn { border-color: var(--accent-orange); color: var(--accent-orange); }
+    .badge-pill.hide { background: #f3f4f6; color: var(--ink); }
+    .badge-pill.ru { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .proj-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .proj-card .ph { height: 72px; background: var(--panel); }
+    .proj-card .bd { padding: 14px 16px 16px; }
+    .proj-card h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; font-family: var(--font-heading); }
+    .proj-card a {
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--link);
+    }
+    .proj-card a:visited,
+    .proj-card a:link {
+      color: var(--link);
+    }
+    .proj-card a:hover {
+      color: var(--hover-link);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 4px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--bg);
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+    .list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 16px;
+    }
+    .list li:last-child { border-bottom: 0; }
+    .thumb {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--panel);
+      flex-shrink: 0;
+    }
+    .list-body { flex: 1; min-width: 0; }
+    .list-title {
+      font-weight: 500;
+      line-height: 1.35;
+    }
+    .list-meta { font-size: 13px; color: var(--muted); }
+
+    .profile-head { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      flex-shrink: 0;
+    }
+    .profile-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      line-height: 1.25;
+      color: var(--ink);
+    }
+    /* Подстрочник под именем — как подзаголовок в гайде (Regular, чёрный, шаг 1.6rem) */
+    .sub {
+      margin: 0 0 12px;
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--ink);
+      font-family: var(--font-body);
+    }
+    .profile-name + .sub {
+      margin-top: 0.5rem;
+    }
+    .profile-org-line {
+      margin: 0 0 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 400;
+      color: var(--muted);
+      font-family: var(--font-body);
+      max-width: 52ch;
+    }
+
+    .gamify {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 720px) { .gamify { grid-template-columns: 1fr; } }
+    .gm-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .gm-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: var(--font-heading);
+    }
+    .gm-accent-blue { border-top: 4px solid var(--accent-blue); }
+    .gm-accent-purple { border-top: 4px solid var(--accent-purple); }
+    .gm-accent-orange { border-top: 4px solid var(--accent-orange); }
+    .bar {
+      height: 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      margin-top: 8px;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .bar-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 72%;
+      background: var(--accent-blue);
+      opacity: 0.35;
+    }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+    .badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+    .badge.b1 { border-color: var(--accent-blue); }
+    .badge.b2 { border-color: var(--accent-purple); }
+    .badge.b3 { border-color: var(--accent-orange); }
+    .currency { font-size: 24px; font-weight: 700; font-family: var(--font-heading); margin-top: 4px; }
+    .currency small { font-size: 13px; font-weight: 400; color: var(--muted); }
+
+    .chat-mock {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: var(--bg);
+      font-size: 15px;
+    }
+    .chat-mock .q { color: var(--muted); margin-bottom: 8px; }
+    .chat-mock .src { margin-top: 10px; font-size: 13px; }
+
+    .section-title + .admin-tabs {
+      margin-top: 0.75rem;
+    }
+    .admin-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .admin-tabs button {
+      font: inherit;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    }
+    .admin-tabs button:hover:not(.is-on) {
+      color: var(--ink);
+      background: var(--hover-white);
+    }
+    .admin-tabs button.is-on {
+      background: var(--panel);
+      border-color: var(--border);
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .admin-tabs button.is-on:hover {
+      background: var(--hover-on-panel);
+      color: var(--ink);
+    }
+    .admin-panel {
+      display: none;
+      margin-top: 0;
+    }
+    .admin-panel.is-on {
+      display: block;
+      margin-top: 12px;
+    }
+
+    .wizard-step { display: none; }
+    .wizard-step.is-on { display: block; }
+
+    .timeline {
+      margin: 0;
+      padding: 0 0 0 16px;
+      list-style: none;
+      border-left: 2px solid var(--panel);
+    }
+    .timeline li { margin-bottom: 10px; position: relative; }
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      left: -21px;
+      top: 6px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+    }
+
+    .templates {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .tpl {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+    }
+    .tpl:hover {
+      background: var(--hover-bg-page);
+      border-color: var(--border);
+    }
+    .tpl small { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); font-weight: 400; }
+
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <button type="button" class="logo" id="logo-home" aria-label="На главную">AxFiles <span>x Клиент</span></button>
+      <form class="search-wrap" id="header-search" role="search">
+        <input type="search" id="header-q" placeholder="Поиск по всей базе знаний…" aria-label="Запрос" />
+        <button type="submit" class="btn">Искать</button>
+      </form>
+      <div class="icons">
+        <button type="button" class="icon-slot" id="btn-notify" title="Уведомления" aria-label="Уведомления">
+          <img src="icon-bell.png" width="22" height="22" alt="" decoding="async" />
+        </button>
+        <button type="button" class="icon-slot" id="btn-settings" title="Настройки" aria-label="Настройки">
+          <img src="icon-settings.png" width="22" height="22" alt="" decoding="async" />
+        </button>
+        <button type="button" class="icon-slot" id="btn-profile-ico" title="Мой профиль" aria-label="Мой профиль">
+          <img src="icon-profile.png" width="22" height="22" alt="" decoding="async" />
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div id="app-crumbs" class="crumbs app-crumbs" aria-label="Путь по разделу"></div>
+      <aside class="nav" aria-label="Основные разделы">
+        <h3>Работа</h3>
+        <ul>
+          <li><a href="#/dashboard" data-nav-key="dashboard">Главная</a></li>
+          <li><a href="#/search" data-nav-key="search">Поиск</a></li>
+          <li><a href="#/documents" data-nav-key="documents">Документы</a></li>
+          <li><a href="#/projects" data-nav-key="projects">Проекты</a></li>
+          <li><a href="#/experts" data-nav-key="experts">Эксперты</a></li>
+        </ul>
+        <h3>Организация</h3>
+        <ul>
+          <li><a href="#/admin" data-nav-key="admin">Администрирование</a></li>
+          <li><a href="#/profile" data-nav-key="profile">Мой профиль</a></li>
+        </ul>
+      </aside>
+
+      <div class="main" id="views">
+        <div class="view" id="view-dashboard" data-view>
+          <div class="card">
+            <h1 class="section-title">Добро пожаловать, Анна</h1>
+            <p class="section-note">Онбординг: 4 из 6 шагов — остались «совместное редактирование» и «напоминания об актуализации».</p>
+            <div class="cta-grid">
+              <a class="cta-card" href="#/search"><strong>Поиск по базе</strong><span>Полнотекст, семантика и фильтры по материалам организации</span></a>
+              <a class="cta-card" href="#/projects"><strong>Проекты</strong><span>Команда, артефакты и привязанные документы KMS</span></a>
+              <a class="cta-card" href="#/experts"><strong>Найти эксперта</strong><span>По навыкам, роли и участию в проектах</span></a>
+              <a class="cta-card" href="#/documents"><strong>Документы</strong><span>Каталог, версии и создание по шаблону</span></a>
+            </div>
+          </div>
+          <div class="card">
+            <h2 class="panel-title">Продолжить</h2>
+            <p class="micro">Последний просмотр — возврат в тот же контекст.</p>
+            <p style="margin:0"><a href="#/doc/policy" data-doc-from="dashboard">Политика классификации данных</a> <span class="micro">· проект «Бета — compliance»</span></p>
+            <p style="margin:8px 0 0"><a href="#/projects/alpha">Альфа — внедрение CRM</a> <span class="micro">· 12 документов</span></p>
+          </div>
+        </div>
+
+        <div class="view" id="view-search" data-view>
+          <div class="card">
+            <h2 class="section-title">Поиск и расширенные фильтры</h2>
+            <div class="search-ai-banner" role="note">
+              <img src="icon-ai.png" width="26" height="26" alt="" decoding="async" aria-hidden="true" />
+              <div>
+                <strong>ИИ помогает искать</strong>
+                <p class="micro">Семантика и ранжирование по смыслу запроса работают вместе с полнотекстом; в выдаче видна AI-релевантность.</p>
+              </div>
+            </div>
+            <form class="search-wrap search-wrap-page" id="page-search-form" role="search" aria-label="Поиск по базе на экране">
+              <input type="search" id="page-search-q" placeholder="Запрос по базе знаний…" aria-label="Поисковый запрос" autocomplete="off" />
+              <button type="submit" class="btn">Искать</button>
+            </form>
+            <details class="search-filters-details">
+              <summary>
+                <span class="search-filters-summary-stack">
+                  <span class="search-filters-summary-title">Параметры поиска</span>
+                  <span class="search-filters-summary-hint">Теги, тип материала, проект и автор — раскройте блок, чтобы сузить выдачу для поиска.</span>
+                </span>
+              </summary>
+              <div class="filter-row">
+                <span class="lbl">Фильтры</span>
+                <select class="faux" aria-label="Тег"><option>#152-ФЗ</option><option>#CRM</option><option>#API</option></select>
+                <select class="faux" aria-label="Тип"><option>Регламент</option><option>Презентация</option><option>Шаблон</option></select>
+                <select class="faux" aria-label="Проект"><option>Все проекты</option><option>Альфа — CRM</option><option>Бета — compliance</option></select>
+                <select class="faux" aria-label="Автор"><option>Все авторы</option><option>Иванова А.</option><option>Петров Д.</option></select>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="view" id="view-search-results" data-view>
+          <div class="card">
+            <h2 class="section-title">Результаты</h2>
+            <p class="section-note muted" id="results-query-label">Запрос: «доступ к персональным данным» · полнотекст + семантика</p>
+            <table class="data">
+              <thead>
+                <tr><th>Материал</th><th>Проект</th><th>Теги</th><th>AI-релевантность</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#/doc/policy">Политика классификации данных</a></td>
+                  <td>Бета — compliance</td>
+                  <td><span class="badge-pill">#152-ФЗ</span></td>
+                  <td><span class="badge-pill ok">высокая</span></td>
+                </tr>
+                <tr>
+                  <td><a href="#/doc/presentation">Презентация для заказчика Q1</a></td>
+                  <td>Альфа — CRM</td>
+                  <td><span class="badge-pill">#CRM</span></td>
+                  <td><span class="badge-pill">средняя</span></td>
+                </tr>
+                <tr>
+                  <td><a href="#/doc/api">Описание API v1</a></td>
+                  <td>—</td>
+                  <td><span class="badge-pill">#API</span></td>
+                  <td><span class="badge-pill">низкая</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="micro" style="margin-top:12px;margin-bottom:0">Связанный проект — <a href="#/projects/beta">Бета — compliance</a>; материал «Матрица ролей» часто открывают вместе с политикой.</p>
+          </div>
+        </div>
+
+        <div class="view" id="view-documents" data-view>
+          <div class="card">
+            <h2 class="section-title">Документы</h2>
+            <p class="section-note">Каталог, версии и шаблоны; новый документ создаётся здесь же.</p>
+            <div class="search-ai-banner" role="note">
+              <img src="icon-ai.png" width="26" height="26" alt="" decoding="async" aria-hidden="true" />
+              <div>
+                <strong>ИИ в каталоге документов</strong>
+                <p class="micro">Поиск по названию, тегам и смыслу только внутри материалов KMS; фильтры ниже относятся к документам, а не к проектам целиком.</p>
+              </div>
+            </div>
+            <form class="search-wrap search-wrap-page" id="documents-search-form" role="search" aria-label="Поиск в документах">
+              <input type="search" id="documents-search-q" placeholder="Название, тег, автор, фрагмент текста…" aria-label="Поиск по документам" autocomplete="off" />
+              <button type="submit" class="btn">Искать</button>
+            </form>
+            <details class="search-filters-details">
+              <summary>
+                <span class="search-filters-summary-stack">
+                  <span class="search-filters-summary-title">Фильтры каталога документов</span>
+                  <span class="search-filters-summary-hint">Тип, тег, проект привязки, статус жизненного цикла и владелец — уточняют выдачу по каталогу.</span>
+                </span>
+              </summary>
+              <div class="filter-row">
+                <span class="lbl">Документы</span>
+                <select class="faux" aria-label="Тип материала"><option>Регламент</option><option>Презентация</option><option>Шаблон</option><option>Описание API</option><option>Отчёт</option></select>
+                <select class="faux" aria-label="Тег"><option>#152-ФЗ</option><option>#CRM</option><option>#API</option><option>#ПДн</option><option>Любой тег</option></select>
+                <select class="faux" aria-label="Проект"><option>Все проекты</option><option>Альфа — CRM</option><option>Бета — compliance</option><option>Без проекта</option></select>
+                <select class="faux" aria-label="Статус"><option>Актуально</option><option>На проверке</option><option>Черновик</option><option>Архив</option><option>Любой статус</option></select>
+                <select class="faux" aria-label="Владелец"><option>Все владельцы</option><option>Иванова А.</option><option>Петров Д.</option><option>Моя команда</option></select>
+                <select class="faux" aria-label="Срок актуализации"><option>Любой</option><option>В просрочке</option><option>В течение 7 дней</option><option>В течение 30 дней</option></select>
+              </div>
+            </details>
+            <p style="margin:0 0 16px">
+              <a class="doc-create" href="#/content/new">
+                <img src="icon-new-doc.png" width="28" height="28" alt="" decoding="async" />
+                Создать новый документ
+              </a>
+            </p>
+            <p class="micro">Недавние материалы</p>
+            <table class="data">
+              <thead>
+                <tr><th>Название</th><th>Проект</th><th>Статус</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#/doc/policy" data-doc-from="documents">Политика классификации данных</a></td>
+                  <td>Бета — compliance</td>
+                  <td><span class="badge-pill ok">Актуально</span></td>
+                </tr>
+                <tr>
+                  <td><a href="#/doc/presentation" data-doc-from="documents">Презентация для заказчика Q1</a></td>
+                  <td>Альфа — CRM</td>
+                  <td><span class="badge-pill warn">На проверке</span></td>
+                </tr>
+                <tr>
+                  <td><a href="#/doc/api" data-doc-from="documents">Описание API v1</a></td>
+                  <td>—</td>
+                  <td><span class="badge-pill ok">Актуально</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="view" id="view-document" data-view>
+          <div class="card">
+            <h2 class="section-title" id="doc-title">Документ</h2>
+            <p class="section-note" id="doc-sub"></p>
+            <div class="two-col">
+              <div>
+                <p class="micro">Версионность и история</p>
+                <p style="margin:0" id="doc-version"></p>
+                <ul class="timeline" id="doc-history" style="margin-top:12px"></ul>
+              </div>
+              <div>
+                <p class="micro">Владелец, актуализация, видимость</p>
+                <p style="margin:0" id="doc-owner"></p>
+                <p class="micro" id="doc-visibility"></p>
+                <p class="micro">Совместное редактирование: <span id="doc-collab"></span></p>
+                <p class="micro">Файл: <span id="doc-file"></span> — <button type="button" class="btn secondary" style="height:32px;font-size:12px">Предпросмотр</button></p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">ИИ в карточке</h3>
+            <p class="micro" id="doc-ai-summary"></p>
+            <div class="chat-mock" id="doc-ai-chat"></div>
+          </div>
+          <div class="card">
+            <h3 class="panel-title">Метрики, оценка, комментарии</h3>
+            <p class="micro" id="doc-metrics"></p>
+            <p class="micro" id="doc-stars" style="margin-top:10px;margin-bottom:4px"></p>
+            <p class="micro" id="doc-comments"></p>
+          </div>
+        </div>
+
+        <div class="view" id="view-projects" data-view>
+          <div class="card">
+            <h2 class="section-title">Проекты</h2>
+            <p class="section-note">Хранение проектных артефактов и привязка документов.</p>
+            <div class="search-ai-banner" role="note">
+              <img src="icon-ai.png" width="26" height="26" alt="" decoding="async" aria-hidden="true" />
+              <div>
+                <strong>ИИ в каталоге проектов</strong>
+                <p class="micro">Поиск по названию, описанию и связанным материалам KMS; фильтры — про статус и состав проекта, не про отдельные файлы.</p>
+              </div>
+            </div>
+            <form class="search-wrap search-wrap-page" id="projects-search-form" role="search" aria-label="Поиск в проектах">
+              <input type="search" id="projects-search-q" placeholder="Название проекта, код, заказчик…" aria-label="Поиск по проектам" autocomplete="off" />
+              <button type="submit" class="btn">Искать</button>
+            </form>
+            <details class="search-filters-details">
+              <summary>
+                <span class="search-filters-summary-stack">
+                  <span class="search-filters-summary-title">Фильтры каталога проектов</span>
+                  <span class="search-filters-summary-hint">Статус, заказчик, направление и наличие документов KMS — чтобы сузить список проектов.</span>
+                </span>
+              </summary>
+              <div class="filter-row">
+                <span class="lbl">Проекты</span>
+                <select class="faux" aria-label="Статус проекта"><option>Активен</option><option>На согласовании</option><option>Закрыт</option><option>Приостановлен</option><option>Любой статус</option></select>
+                <select class="faux" aria-label="Заказчик"><option>Все заказчики</option><option>Внутренний</option><option>Внешний ключевой</option><option>Госзаказ</option></select>
+                <select class="faux" aria-label="Направление / тег"><option>CRM / продажи</option><option>Compliance / ПДн</option><option>Интеграции / API</option><option>Инфраструктура</option><option>Любое</option></select>
+                <select class="faux" aria-label="Документы KMS"><option>С привязанными документами</option><option>Без документов</option><option>Не важно</option></select>
+                <select class="faux" aria-label="Моя роль"><option>Любая роль</option><option>Я владелец</option><option>Я участник</option><option>Я наблюдатель</option></select>
+              </div>
+            </details>
+            <div class="project-grid">
+              <article class="proj-card">
+                <div class="ph" aria-hidden="true"></div>
+                <div class="bd">
+                  <h4>Альфа — внедрение CRM</h4>
+                  <span class="badge-pill ok">12 документов</span>
+                  <p class="micro">Артефакты: ТЗ v3, Figma, Jira.</p>
+                  <a href="#/projects/alpha">Открыть проект →</a>
+                </div>
+              </article>
+              <article class="proj-card">
+                <div class="ph" aria-hidden="true"></div>
+                <div class="bd">
+                  <h4>Бета — compliance</h4>
+                  <span class="badge-pill warn">на проверке</span>
+                  <p class="micro">Регламенты ПДн, политики, аудит.</p>
+                  <a href="#/projects/beta">Открыть проект →</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-project" data-view>
+          <div class="card">
+            <h2 class="section-title" id="project-title">Проект</h2>
+            <p class="section-note" id="project-desc"></p>
+            <p class="micro" id="project-artifacts"></p>
+            <p class="micro">Привязанные документы KMS:</p>
+            <ul style="margin:0;padding-left:20px" id="project-docs"></ul>
+          </div>
+        </div>
+
+        <div class="view" id="view-content-new" data-view>
+          <div class="card" id="wizard-step1">
+            <h2 class="section-title">Шаблоны для создания контента</h2>
+            <p class="section-note">Шаг 1 — выберите тип будущего документа.</p>
+            <div class="templates">
+              <button type="button" class="tpl" data-next-wizard>Регламент доступа <small>роль + согласование</small></button>
+              <button type="button" class="tpl" data-next-wizard>Описание API <small>OpenAPI + примеры</small></button>
+              <button type="button" class="tpl" data-next-wizard>Отчёт по проекту <small>структура разделов</small></button>
+              <button type="button" class="tpl" data-next-wizard>Чек-лист актуализации <small>владелец + срок</small></button>
+            </div>
+          </div>
+          <div class="card wizard-step" id="wizard-step2" style="display:none">
+            <h2 class="section-title">Черновик создан</h2>
+            <p class="section-note">Шаг 2 — документ появился в разделе «Черновики»; владелец: вы.</p>
+            <p class="micro">Документ открывается в редакторе; доступны совместное редактирование, вложения и предпросмотр без скачивания.</p>
+            <p style="margin:0"><a href="#/doc/api">Открыть документ →</a></p>
+            <p style="margin-top:12px"><button type="button" class="btn secondary" id="wizard-back">Выбрать другой шаблон</button></p>
+          </div>
+        </div>
+
+        <div class="view" id="view-experts" data-view>
+          <div class="card">
+            <h2 class="section-title">Поиск экспертов</h2>
+            <p class="section-note">Каталог сотрудников: имя ведёт в профиль; строка поиска и фильтры — для сужения списка перед переходом к материалам автора.</p>
+            <div class="search-ai-banner" role="note">
+              <img src="icon-ai.png" width="26" height="26" alt="" decoding="async" aria-hidden="true" />
+              <div>
+                <strong>ИИ в каталоге экспертов</strong>
+                <p class="micro">Подсказки по навыкам и формулировкам ролей; дальше — фильтры по оргструктуре, проекту и наличию публикаций в KMS.</p>
+              </div>
+            </div>
+            <form class="search-wrap search-wrap-page" id="experts-search-form" role="search" aria-label="Поиск в каталоге экспертов">
+              <input type="search" id="experts-search-q" placeholder="ФИО, роль, подразделение…" aria-label="Запрос по каталогу экспертов" autocomplete="off" />
+              <button type="submit" class="btn">Искать</button>
+            </form>
+            <details class="search-filters-details">
+              <summary>
+                <span class="search-filters-summary-stack">
+                  <span class="search-filters-summary-title">Фильтры каталога экспертов</span>
+                  <span class="search-filters-summary-hint">Навык, проект, подразделение, уровень владения темой и материалы в базе — актуально для подбора эксперта.</span>
+                </span>
+              </summary>
+              <div class="filter-row">
+                <span class="lbl">Эксперты</span>
+                <select class="faux" aria-label="Навык / компетенция"><option>152-ФЗ и ПДн</option><option>OData и API</option><option>Архитектура данных</option><option>Документооборот</option><option>Любой навык</option></select>
+                <select class="faux" aria-label="Проект"><option>Любой проект</option><option>Альфа — CRM</option><option>Бета — compliance</option><option>Только вне проектов</option></select>
+                <select class="faux" aria-label="Подразделение"><option>Вся организация</option><option>ИБ и комплаенс</option><option>ИТ и интеграции</option><option>Продажи и CRM</option></select>
+                <select class="faux" aria-label="Уровень владения"><option>Любой</option><option>Эксперт (L4)</option><option>Практик (L3)</option><option>Базовый (L2)</option></select>
+                <select class="faux" aria-label="Материалы в KMS"><option>С опубликованными материалами</option><option>Без материалов</option><option>Не важно</option></select>
+                <select class="faux" aria-label="Доступность"><option>Любая</option><option>Доступен для консультаций</option><option>Только внутренние запросы</option></select>
+              </div>
+            </details>
+            <table class="data">
+              <thead>
+                <tr><th>Сотрудник</th><th>Роль</th><th>Проекты</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#/experts/ivanova">Иванова Анна</a></td>
+                  <td>Владелец раздела Compliance</td>
+                  <td>Бета</td>
+                  <td><a href="#/search/results">Материалы →</a></td>
+                </tr>
+                <tr>
+                  <td><a href="#/experts/petrov">Петров Дмитрий</a></td>
+                  <td>Архитектор данных</td>
+                  <td>Альфа, Бета</td>
+                  <td><a href="#/search/results">Материалы →</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="view" id="view-expert" data-view>
+          <div class="card">
+            <div class="profile-head">
+              <div class="avatar" aria-hidden="true"></div>
+              <div>
+                <p class="profile-name" id="expert-name"></p>
+                <p class="sub" id="expert-role"></p>
+                <div class="chips" id="expert-chips"></div>
+                <p class="micro" id="expert-bio"></p>
+                <a class="btn" href="#/search/results" style="display:inline-flex;align-items:center;text-decoration:none">Найти материалы этого автора</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-notifications" data-view>
+          <div class="card">
+            <h2 class="section-title">Центр уведомлений</h2>
+            <ul class="timeline">
+              <li>Опубликована v1.4 <a href="#/doc/policy">«Политика классификации данных»</a> — подписчики раздела Compliance</li>
+              <li><a href="#/experts/ivanova">Иванова А.</a> упомянула вас в комментарии к шаблону</li>
+              <li>Напоминание: через 5 дней срок актуализации <a href="#/doc/policy">регламента доступа к ПДн</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="view" id="view-search-ai" data-view>
+          <div class="card">
+            <h2 class="section-title">ИИ-ассистент в поиске</h2>
+            <p class="section-note">Ответы только по проиндексированным материалам, с обязательными ссылками на источники.</p>
+            <div class="chat-mock">
+              <div class="q">Вопрос: какие регламенты требуют согласования ИБ перед публикацией?</div>
+              <p style="margin:0"><strong>Ответ:</strong> по матрице согласований (раздел «Бета») — политики уровня L3–L4 и все внешние публикации. Конкретные шаблоны: «Регламент доступа», «Политика классификации».</p>
+              <div class="src"><a href="#/doc/policy">Политика классификации данных</a> · <a href="#/projects/beta">Проект Бета — compliance</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-admin" data-view>
+          <div class="card">
+            <h2 class="section-title">Администрирование KMS</h2>
+            <div class="admin-tabs" role="tablist">
+              <button type="button" class="is-on" data-tab="access">Роли и видимость</button>
+              <button type="button" data-tab="sso">SSO и интеграции</button>
+              <button type="button" data-tab="ai">ИИ и индексация</button>
+              <button type="button" data-tab="infra">Инфраструктура</button>
+            </div>
+            <div class="admin-panel is-on" id="tab-access">
+              <h3 class="panel-title">Ролевая модель и скрытые материалы</h3>
+              <table class="data">
+                <thead>
+                  <tr><th>Роль</th><th>Скрытые материалы</th><th>Админ раздела</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Сотрудник</td><td><span class="badge-pill hide">нет</span></td><td>—</td></tr>
+                  <tr><td>Эксперт раздела</td><td><span class="badge-pill ok">по назначению</span></td><td>✓</td></tr>
+                  <tr><td>Администратор KMS</td><td><span class="badge-pill ok">полная</span></td><td>✓</td></tr>
+                </tbody>
+              </table>
+              <p class="micro">Документ «Закрытые риски (юридический)» скрыт от роли «Сотрудник», виден юристам.</p>
+            </div>
+            <div class="admin-panel" id="tab-sso">
+              <h3 class="panel-title">Единый вход и внешние системы</h3>
+              <p class="micro"><span class="badge-pill ok">SAML 2.0</span> <span class="badge-pill" style="margin-left:6px">OIDC</span> — корпоративный IdP, JIT роли.</p>
+              <p class="micro">Интеграции: Microsoft 365, корпоративный мессенджер, S3-совместимое хранилище, webhooks уведомлений.</p>
+            </div>
+            <div class="admin-panel" id="tab-ai">
+              <h3 class="panel-title">Политика ИИ в организации</h3>
+              <p class="micro">Включены: AI-поиск, саммари, ассистент с цитированием. Индексируются только разрешённые пространства; исключения по меткам конфиденциальности.</p>
+            </div>
+            <div class="admin-panel" id="tab-infra">
+              <h3 class="panel-title">Размещение данных</h3>
+              <p class="micro"><span class="badge-pill ru">152-ФЗ</span> <span class="badge-pill ru" style="margin-left:6px">ЦОД РФ</span> — резервирование, шифрование, журналы доступа.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-profile" data-view>
+          <div class="card">
+            <div class="profile-head">
+              <div class="avatar" aria-hidden="true"></div>
+              <div>
+                <p class="profile-name">Иванова Анна</p>
+                <p class="sub">Владелец раздела «Compliance»</p>
+                <p class="profile-org-line">Дирекция информационной безопасности и корпоративного комплаенса · ведущий проект «Бета — compliance» · офис: Москва</p>
+                <div class="chips">
+                  <span class="chip">#152-ФЗ</span>
+                  <span class="chip">#доступы</span>
+                  <span class="chip">#бета</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="two-col">
+            <section class="card" aria-labelledby="profile-projects-title">
+              <h2 class="panel-title" id="profile-projects-title">Мои проекты</h2>
+              <ul class="list">
+                <li>
+                  <div class="thumb" aria-hidden="true"></div>
+                  <div class="list-body">
+                    <div class="list-title"><a href="#/projects/beta">Бета — compliance</a></div>
+                    <div class="list-meta">Владелец контента · 8 документов</div>
+                  </div>
+                </li>
+                <li>
+                  <div class="thumb" aria-hidden="true"></div>
+                  <div class="list-body">
+                    <div class="list-title"><a href="#/projects/alpha">Альфа — внедрение CRM</a></div>
+                    <div class="list-meta">Участник · 12 документов</div>
+                  </div>
+                </li>
+              </ul>
+            </section>
+            <section class="card" aria-labelledby="profile-materials-title">
+              <h2 class="panel-title" id="profile-materials-title">Материалы и вклад</h2>
+              <ul class="list">
+                <li>
+                  <div class="thumb" aria-hidden="true"></div>
+                  <div class="list-body">
+                    <div class="list-title"><a href="#/doc/policy" data-doc-from="profile">Политика классификации данных</a></div>
+                    <div class="list-meta">Статус актуальности · v1.4 · совместное редактирование</div>
+                  </div>
+                </li>
+                <li>
+                  <div class="thumb" aria-hidden="true"></div>
+                  <div class="list-body">
+                    <div class="list-title"><a href="#/doc/api" data-doc-from="profile">Описание API v1</a></div>
+                    <div class="list-meta">Комментарии / оценки · метрики использования</div>
+                  </div>
+                </li>
+              </ul>
+            </section>
+          </div>
+          <div class="card">
+            <h2 class="panel-title">Геймификация</h2>
+            <p class="section-note">Рейтинг авторов, значки за вклад и внутренняя валюта мотивации.</p>
+            <div class="gamify">
+              <div class="gm-card gm-accent-blue">
+                <div class="gm-label">Рейтинг автора</div>
+                <div><strong>3‑е место</strong> в разделе «Регламенты», 1280 баллов за квартал</div>
+                <div class="bar"><div class="bar-fill"></div></div>
+              </div>
+              <div class="gm-card gm-accent-purple">
+                <div class="gm-label">Значки за вклад</div>
+                <div>«Автор квартала», «10 согласованных документов», «Ментор онбординга»</div>
+                <div class="badges">
+                  <div class="badge b1" title="Синий акцент"></div>
+                  <div class="badge b2" title="Фиолетовый акцент"></div>
+                  <div class="badge b3" title="Оранжевый акцент"></div>
+                  <div class="badge" title="Ещё"></div>
+                </div>
+              </div>
+              <div class="gm-card gm-accent-orange">
+                <div class="gm-label">Внутренняя валюта</div>
+                <div class="currency">1 240 <small>единиц</small></div>
+                <p class="list-meta" style="margin-top:8px;margin-bottom:0"><a href="#/dashboard">История начислений</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  var views = document.querySelectorAll("[data-view]");
+  var navLinks = document.querySelectorAll(".nav a[data-nav-key]");
+
+  function setCrumbs(html) {
+    var bar = document.getElementById("app-crumbs");
+    if (bar) bar.innerHTML = html || "";
+  }
+
+  function parts() {
+    var h = (location.hash || "#/dashboard").replace(/^#\/?/, "").trim();
+    return h ? h.split("/") : ["dashboard"];
+  }
+
+  function showView(id) {
+    views.forEach(function (el) {
+      el.classList.toggle("is-active", el.id === "view-" + id);
+    });
+  }
+
+  var DOCS = {
+    policy: {
+      projectCrumb: "beta",
+      title: "Политика классификации данных",
+      sub: "Регламент уровня L3 · проект «Бета — compliance»",
+      version: "Текущая версия v1.4 · опубликована 17.04.2026",
+      history: [
+        "17.04 — Петров Д.: публикация после ИБ",
+        "16.04 — Иванова А.: совместное редактирование",
+        "12.04 — автосохранение v1.3.1"
+      ],
+      owner: "Владелец: Иванова А. · статус: <strong>Актуально</strong> · напоминание об актуализации через 5 дн.",
+      visibility: "Видимость: внутренний контент; скрытые приложения не индексируются для ИИ.",
+      collab: "Иванова, Петров (сессия редактирования активна вчера)",
+      file: "policy-classification.docx (встроенный предпросмотр)",
+      aiSummary: "AI-саммари: четыре уровня чувствительности, ответственные роли, отсылка к матрице согласований.",
+      aiChat: "<div class='q'>Кто согласует изменения?</div><p style='margin:0'><strong>Ассистент:</strong> по §4.2 согласование ИБ обязательно; контакт владельца в карточке.</p><div class='src'>Источник: этот документ v1.4</div>",
+      metrics: "Просмотры: 1 842 / 90 дн. · популярность: топ 5%",
+      stars: "Оценка: ★★★★☆ (12 отзывов)",
+      comments: "Последний комментарий Сидорова: «Нужен пример для облака» — тред в §3."
+    },
+    presentation: {
+      projectCrumb: "alpha",
+      title: "Презентация для заказчика Q1",
+      sub: "Проект «Альфа — CRM» · для внешней встречи",
+      version: "Версия v2.0",
+      history: ["10.04 — загружена тяжёлая версия pptx", "05.04 — черновик"],
+      owner: "Владелец: Петров Д. · статус: <strong>На проверке</strong>",
+      visibility: "Видимость: проектная команда + аккаунт-менеджмент.",
+      collab: "—",
+      file: "presentation.pptx · 32 МБ (предпросмотр слайдов в браузере)",
+      aiSummary: "AI-саммари: 14 слайдов, акцент на дорожной карте внедрения и KPI.",
+      aiChat: "<div class='q'>Кратко: о чём презентация?</div><p style='margin:0'><strong>Ассистент:</strong> внедрение CRM, этапы, риски, запрос ресурсов на Q2.</p><div class='src'>Файл presentation.pptx</div>",
+      metrics: "Скачиваний: 56 · просмотров предпросмотра: 210",
+      stars: "Оценка: ★★★☆☆",
+      comments: "Комментарии отключены для внешней версии (политика проекта)."
+    },
+    api: {
+      projectCrumb: null,
+      title: "Описание API v1",
+      sub: "Общий раздел платформы · без привязки к проекту",
+      version: "Версия v1.1",
+      history: ["01.04 — правки примеров кода", "20.03 — первая публикация"],
+      owner: "Владелец: Петров Д. · статус: <strong>Актуально</strong>",
+      visibility: "Видимость: все разработчики; фрагменты с секретами — скрыты по ACL.",
+      collab: "Сидоров (редактор)",
+      file: "openapi.yaml + integrations.xlsx 4,2 МБ",
+      aiSummary: "AI-саммари: REST ресурсы Orders и Customers, ошибки 4xx/5xx, ссылка на песочницу.",
+      aiChat: "<div class='q'>Где описана пагинация?</div><p style='margin:0'><strong>Ассистент:</strong> раздел Query parameters, параметры limit и cursor.</p><div class='src'>openapi.yaml, лист «Public»</div>",
+      metrics: "Просмотры: 3 900+ · внутренняя популярность: высокая",
+      stars: "★★★★★",
+      comments: "3 открытых треда по полям deprecated."
+    }
+  };
+
+  var PROJECTS = {
+    alpha: {
+      title: "Альфа — внедрение CRM",
+      desc: "Команда, этапы и артефакты в хранилище проекта.",
+      artifacts: "Артефакты: ТЗ v3, макеты Figma, выгрузка задач Jira, записи встреч.",
+      docs: [
+        { href: "#/doc/presentation", text: "Презентация для заказчика Q1" },
+        { href: "#/search/results", text: "Все материалы с тегом #CRM в проекте" }
+      ]
+    },
+    beta: {
+      title: "Бета — compliance",
+      desc: "Регламенты ПДн, политики, подготовка к аудиту.",
+      artifacts: "Артефакты: журнал обработок, приложения к актам, сканы в S3-совместимом хранилище.",
+      docs: [
+        { href: "#/doc/policy", text: "Политика классификации данных" },
+        { href: "#/doc/policy", text: "Регламент доступа к ПДн" }
+      ]
+    }
+  };
+
+  var EXPERTS = {
+    ivanova: {
+      name: "Иванова Анна",
+      role: "Владелец раздела «Compliance» · Дирекция ИБ",
+      chips: ["#152-ФЗ", "#доступы", "проект «Бета»"],
+      bio: "Куратор политик и регламентов; отвечает за скрытые материалы юридического контура для ограниченного круга ролей."
+    },
+    petrov: {
+      name: "Петров Дмитрий",
+      role: "Архитектор данных",
+      chips: ["#odata", "#API", "Альфа", "Бета"],
+      bio: "Проектирование интеграций и публичных контрактов API; ментор онбординга для разработчиков."
+    }
+  };
+
+  function renderDocument(docId, from) {
+    var d = DOCS[docId];
+    if (!d) return;
+    if (from === "project" && d.projectCrumb) {
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/projects">Проекты</a> / <a href="#/projects/' + d.projectCrumb + '">Проект</a> / <span>' + escapeHtml(d.title) + "</span>");
+    } else if (from === "project") {
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/projects">Проекты</a> / <span>' + escapeHtml(d.title) + "</span>");
+    } else if (from === "dashboard") {
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>' + escapeHtml(d.title) + "</span>");
+    } else if (from === "notifications") {
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/notifications">Уведомления</a> / <span>' + escapeHtml(d.title) + "</span>");
+    } else if (from === "profile") {
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/profile">Мой профиль</a> / <span>' + escapeHtml(d.title) + "</span>");
+    } else if (from === "documents") {
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/documents">Документы</a> / <span>' + escapeHtml(d.title) + "</span>");
+    } else {
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/search">Поиск</a> / <a href="#/search/results">Результаты</a> / <span>' + escapeHtml(d.title) + "</span>");
+    }
+    document.getElementById("doc-title").textContent = d.title;
+    document.getElementById("doc-sub").textContent = d.sub;
+    document.getElementById("doc-version").innerHTML = d.version;
+    document.getElementById("doc-owner").innerHTML = d.owner;
+    document.getElementById("doc-visibility").innerHTML = d.visibility;
+    document.getElementById("doc-collab").textContent = d.collab;
+    document.getElementById("doc-file").innerHTML = d.file;
+    document.getElementById("doc-ai-summary").textContent = d.aiSummary;
+    document.getElementById("doc-ai-chat").innerHTML = d.aiChat;
+    document.getElementById("doc-metrics").textContent = d.metrics;
+    document.getElementById("doc-stars").innerHTML = d.stars;
+    document.getElementById("doc-comments").textContent = d.comments;
+    var hist = document.getElementById("doc-history");
+    hist.innerHTML = "";
+    d.history.forEach(function (line) {
+      var li = document.createElement("li");
+      li.textContent = line;
+      hist.appendChild(li);
+    });
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function renderProject(pid) {
+    var p = PROJECTS[pid];
+    if (!p) return;
+    setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/projects">Проекты</a> / <span>' + escapeHtml(p.title) + "</span>");
+    document.getElementById("project-title").textContent = p.title;
+    document.getElementById("project-desc").textContent = p.desc;
+    document.getElementById("project-artifacts").textContent = p.artifacts;
+    var ul = document.getElementById("project-docs");
+    ul.innerHTML = "";
+    p.docs.forEach(function (item) {
+      var li = document.createElement("li");
+      li.innerHTML = '<a href="' + item.href + '">' + escapeHtml(item.text) + "</a>";
+      ul.appendChild(li);
+    });
+  }
+
+  function renderExpert(eid) {
+    var e = EXPERTS[eid];
+    if (!e) return;
+    setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/experts">Эксперты</a> / <span>' + escapeHtml(e.name) + "</span>");
+    document.getElementById("expert-name").textContent = e.name;
+    document.getElementById("expert-role").textContent = e.role;
+    document.getElementById("expert-bio").textContent = e.bio;
+    var chips = document.getElementById("expert-chips");
+    chips.innerHTML = "";
+    e.chips.forEach(function (c) {
+      var span = document.createElement("span");
+      span.className = "chip";
+      span.textContent = c;
+      chips.appendChild(span);
+    });
+  }
+
+  function navActive(key) {
+    navLinks.forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("data-nav-key") === key);
+    });
+  }
+
+  var headerQ = document.getElementById("header-q");
+  var pageQ = document.getElementById("page-search-q");
+
+  function syncPageSearchFromHeader() {
+    if (pageQ && headerQ) {
+      pageQ.value = headerQ.value;
+    }
+  }
+
+  var SEARCH_SCOPE_LABELS = {
+    global: "",
+    documents: "документы",
+    projects: "проекты",
+    experts: "эксперты"
+  };
+
+  function getSelectFiltersSummary(root) {
+    if (!root) return "";
+    var bits = [];
+    root.querySelectorAll("select.faux").forEach(function (sel) {
+      var opt = sel.options[sel.selectedIndex];
+      if (!opt) return;
+      var lab = sel.getAttribute("aria-label") || "";
+      bits.push(lab ? lab + ": «" + opt.text + "»" : "«" + opt.text + "»");
+    });
+    return bits.length ? " · фильтры: " + bits.join("; ") : "";
+  }
+
+  function setSearchContext(scope, rootEl) {
+    sessionStorage.setItem("searchScope", scope);
+    sessionStorage.setItem("searchFiltersLine", getSelectFiltersSummary(rootEl));
+  }
+
+  function buildResultsQueryLabel(q) {
+    var scope = sessionStorage.getItem("searchScope") || "global";
+    var filt = sessionStorage.getItem("searchFiltersLine") || "";
+    var scopeWord = SEARCH_SCOPE_LABELS[scope] || "";
+    var qLine = q
+      ? "Запрос: «" + q + "» · полнотекст + семантика"
+      : "Запрос: «доступ к персональным данным» · полнотекст + семантика";
+    if (scopeWord) {
+      qLine += " · раздел: " + scopeWord;
+    }
+    qLine += filt;
+    return qLine;
+  }
+
+  function route() {
+    var p = parts();
+    var a = p[0];
+    var b = p[1];
+    var c = p[2];
+
+    if (a === "ai") {
+      location.replace("#/search/ai");
+      return;
+    }
+
+    if (a === "dashboard" || a === "") {
+      showView("dashboard");
+      navActive("dashboard");
+      setCrumbs('<span>Главная</span>');
+      document.title = "AxFiles — главная";
+      return;
+    }
+    if (a === "search" && b === "results") {
+      showView("search-results");
+      navActive("search");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/search">Поиск</a> / <span>Результаты</span>');
+      var q = document.getElementById("header-q").value.trim();
+      document.getElementById("results-query-label").textContent = buildResultsQueryLabel(q);
+      document.title = "AxFiles — результаты поиска";
+      return;
+    }
+    if (a === "search" && b === "ai") {
+      showView("search-ai");
+      navActive("search");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/search">Поиск</a> / <span>ИИ-ассистент</span>');
+      document.title = "AxFiles — ИИ в поиске";
+      return;
+    }
+    if (a === "search") {
+      showView("search");
+      navActive("search");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Поиск</span>');
+      syncPageSearchFromHeader();
+      document.title = "AxFiles — поиск";
+      return;
+    }
+    if (a === "doc" && b) {
+      showView("document");
+      var from = sessionStorage.getItem("docFrom") || "search";
+      navActive(
+        from === "project" ? "projects" :
+        from === "dashboard" ? "dashboard" :
+        from === "notifications" ? "notifications" :
+        from === "profile" ? "profile" :
+        from === "documents" ? "documents" :
+        "search"
+      );
+      renderDocument(b, from);
+      document.title = "AxFiles — " + (DOCS[b] && DOCS[b].title ? DOCS[b].title : "документ");
+      return;
+    }
+    if (a === "projects" && b) {
+      showView("project");
+      navActive("projects");
+      renderProject(b);
+      document.title = "AxFiles — проект";
+      return;
+    }
+    if (a === "projects") {
+      showView("projects");
+      navActive("projects");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Проекты</span>');
+      var prq = document.getElementById("projects-search-q");
+      if (prq && headerQ) prq.value = headerQ.value;
+      document.title = "AxFiles — проекты";
+      return;
+    }
+    if (a === "documents") {
+      showView("documents");
+      navActive("documents");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Документы</span>');
+      var docq = document.getElementById("documents-search-q");
+      if (docq && headerQ) docq.value = headerQ.value;
+      document.title = "AxFiles — документы";
+      return;
+    }
+    if (a === "content" && b === "new") {
+      showView("content-new");
+      navActive("documents");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/documents">Документы</a> / <span>Создать</span>');
+      document.title = "AxFiles — создать";
+      document.getElementById("wizard-step1").style.display = "block";
+      document.getElementById("wizard-step2").style.display = "none";
+      return;
+    }
+    if (a === "experts" && b) {
+      showView("expert");
+      navActive("experts");
+      renderExpert(b);
+      document.title = "AxFiles — эксперт";
+      return;
+    }
+    if (a === "experts") {
+      showView("experts");
+      navActive("experts");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Эксперты</span>');
+      var exq = document.getElementById("experts-search-q");
+      if (exq && headerQ) exq.value = headerQ.value;
+      document.title = "AxFiles — эксперты";
+      return;
+    }
+    if (a === "notifications") {
+      showView("notifications");
+      navActive("notifications");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Уведомления</span>');
+      document.title = "AxFiles — уведомления";
+      return;
+    }
+    if (a === "admin") {
+      showView("admin");
+      navActive("admin");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Администрирование</span>');
+      document.title = "AxFiles — администрирование";
+      return;
+    }
+    if (a === "profile") {
+      showView("profile");
+      navActive("profile");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Мой профиль</span>');
+      document.title = "AxFiles — профиль";
+      return;
+    }
+
+    location.hash = "#/dashboard";
+  }
+
+  window.addEventListener("hashchange", route);
+
+  headerQ.addEventListener("input", function () {
+    if (pageQ) {
+      pageQ.value = headerQ.value;
+    }
+  });
+  pageQ.addEventListener("input", function () {
+    headerQ.value = pageQ.value;
+  });
+
+  document.getElementById("page-search-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    headerQ.value = pageQ.value;
+    setSearchContext("global", document.getElementById("view-search"));
+    location.hash = "#/search/results";
+  });
+
+  document.getElementById("documents-search-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var dq = document.getElementById("documents-search-q");
+    var v = dq ? dq.value.trim() : "";
+    headerQ.value = v;
+    if (pageQ) pageQ.value = v;
+    setSearchContext("documents", document.querySelector("#view-documents .card"));
+    location.hash = "#/search/results";
+  });
+
+  document.getElementById("projects-search-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var pq = document.getElementById("projects-search-q");
+    var v = pq ? pq.value.trim() : "";
+    headerQ.value = v;
+    if (pageQ) pageQ.value = v;
+    setSearchContext("projects", document.querySelector("#view-projects .card"));
+    location.hash = "#/search/results";
+  });
+
+  document.getElementById("experts-search-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var eq = document.getElementById("experts-search-q");
+    var v = eq ? eq.value.trim() : "";
+    headerQ.value = v;
+    if (pageQ) pageQ.value = v;
+    setSearchContext("experts", document.querySelector("#view-experts .card"));
+    location.hash = "#/search/results";
+  });
+
+  document.getElementById("logo-home").addEventListener("click", function () {
+    location.hash = "#/dashboard";
+  });
+
+  document.getElementById("header-search").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    setSearchContext("global", document.getElementById("view-search"));
+    location.hash = "#/search/results";
+  });
+
+  document.getElementById("btn-notify").addEventListener("click", function () {
+    location.hash = "#/notifications";
+  });
+
+  document.getElementById("btn-settings").addEventListener("click", function () {
+    location.hash = "#/admin";
+  });
+
+  document.getElementById("btn-profile-ico").addEventListener("click", function () {
+    location.hash = "#/profile";
+  });
+
+  document.getElementById("views").addEventListener("click", function (ev) {
+    var a = ev.target.closest("a[href^='#/doc/']");
+    if (!a) return;
+    if (a.getAttribute("data-doc-from") === "dashboard") {
+      sessionStorage.setItem("docFrom", "dashboard");
+    } else if (a.getAttribute("data-doc-from") === "profile") {
+      sessionStorage.setItem("docFrom", "profile");
+    } else if (a.getAttribute("data-doc-from") === "documents" || a.closest("#view-documents")) {
+      sessionStorage.setItem("docFrom", "documents");
+    } else if (a.closest("#view-notifications")) {
+      sessionStorage.setItem("docFrom", "notifications");
+    } else if (a.closest("#project-docs") || a.closest("#view-project")) {
+      sessionStorage.setItem("docFrom", "project");
+    } else {
+      sessionStorage.setItem("docFrom", "search");
+    }
+  });
+
+  document.querySelectorAll(".admin-tabs button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var tab = btn.getAttribute("data-tab");
+      document.querySelectorAll(".admin-tabs button").forEach(function (b) {
+        b.classList.toggle("is-on", b === btn);
+      });
+      document.querySelectorAll(".admin-panel").forEach(function (panel) {
+        panel.classList.toggle("is-on", panel.id === "tab-" + tab);
+      });
+    });
+  });
+
+  document.querySelectorAll("[data-next-wizard]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.getElementById("wizard-step1").style.display = "none";
+      document.getElementById("wizard-step2").style.display = "block";
+    });
+  });
+
+  document.getElementById("wizard-back").addEventListener("click", function () {
+    document.getElementById("wizard-step1").style.display = "block";
+    document.getElementById("wizard-step2").style.display = "none";
+  });
+
+  if (!location.hash || location.hash === "#") {
+    location.replace("#/dashboard");
+  } else {
+    route();
+  }
+})();
+  </script>
+</body>
+</html>
