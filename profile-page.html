@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Мой профиль — ax.files</title>
+  <link rel="icon" href="icon-ai.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --rail: #f1f3f5;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.12);
+      --muted: #6c757d;
+      --ink: #212529;
+      --blue: #0d6efd;
+      --blue-soft: #e7f1ff;
+      --blue-hover: #0b5ed7;
+      --orange: #fd7e14;
+      --orange-soft: #fff3e8;
+      --purple-check: #6f42c1;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; color: var(--blue-hover); }
+
+    /* —— Сетка как на главной: шапка | rail + main + правая колонка —— */
+    .app {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) minmax(260px, 320px);
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 64px minmax(0, 1fr);
+      }
+      .app-widgets { display: none; }
+    }
+    @media (max-width: 768px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      .app-rail { display: none; }
+    }
+
+    /* Шапка */
+    .app-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .brand:hover { text-decoration: none; color: var(--ink); }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--orange) 0%, #c2410c 100%);
+      display: grid;
+      place-items: center;
+    }
+    .brand-mark svg { width: 18px; height: 18px; color: #fff; }
+    .header-title {
+      flex: 1;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 0;
+      position: relative;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: var(--bg); }
+    .icon-btn img { width: 20px; height: 20px; object-fit: contain; }
+    .icon-btn.has-dot::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #dc3545;
+      border: 2px solid var(--surface);
+    }
+    .avatar-sm {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--rail);
+      display: grid;
+      place-items: center;
+    }
+    .avatar-sm img { width: 22px; height: 22px; }
+
+    /* Левый rail */
+    .app-rail {
+      grid-column: 1;
+      grid-row: 2;
+      background: var(--rail);
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .rail-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      transition: background 0.15s, color 0.15s;
+    }
+    .rail-btn:hover { background: rgba(0, 0, 0, 0.05); color: var(--ink); }
+    .rail-btn.active {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+    .rail-btn svg { width: 22px; height: 22px; }
+    .rail-spacer { flex: 1; min-height: 16px; }
+    .rail-btn.help { color: var(--muted); }
+
+    /* Центр + контент */
+    .app-main {
+      grid-column: 2;
+      grid-row: 2;
+      padding: 24px 28px 40px;
+      overflow-x: hidden;
+    }
+    .section-kicker {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0.02em;
+      margin: 0 0 4px;
+    }
+
+    /* «Герой» карточка — визуальный вес как у видео на главной */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .hero-cover {
+      height: 120px;
+      background: linear-gradient(120deg, #e7f1ff 0%, #dee2e6 45%, #fff 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-body {
+      padding: 0 24px 24px;
+      margin-top: -48px;
+      position: relative;
+    }
+    .hero-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 4px solid var(--surface);
+      background: var(--rail);
+      box-shadow: var(--shadow);
+    }
+    .hero-text { padding-top: 12px; }
+    .profile-name {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .welcome-line {
+      margin: 6px 0 0;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .welcome-line a { font-weight: 600; }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .meta-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .meta-row svg { flex-shrink: 0; opacity: 0.85; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .chip {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .sub {
+      margin: 8px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 56ch;
+    }
+
+    /* Две колонки в main: проекты | материалы */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 720px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .panel-title {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .list { list-style: none; margin: 0; padding: 0; }
+    .list li {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .list li:last-child { border-bottom: 0; }
+    .thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--rail);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .list-title { font-weight: 500; font-size: 14px; }
+    .list-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Сетка «как этапы онбординга» — геймификация */
+    .steps-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      color: var(--ink);
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .steps-grid { grid-template-columns: 1fr; }
+    }
+    .step-card {
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      min-height: 88px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid var(--border);
+      background: #f1f3f5;
+    }
+    .step-card.next {
+      background: var(--surface);
+      border-color: var(--blue);
+      border-width: 2px;
+    }
+    .step-card .ico {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      color: var(--purple-check);
+    }
+    .step-card.next .ico { color: var(--blue); }
+    .step-card strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .step-card p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Правая колонка */
+    .app-widgets {
+      grid-column: 3;
+      grid-row: 2;
+      padding: 24px 20px 40px 0;
+      border-left: 1px solid transparent;
+    }
+    .widgets-inner {
+      position: sticky;
+      top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .greet h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .greet p {
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .widget-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .widget-head h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .widget-head .arrow {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1;
+    }
+    .doc-pill {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      font-size: 13px;
+      border: 1px solid rgba(13, 110, 253, 0.15);
+      margin-bottom: 8px;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .doc-pill:last-child { margin-bottom: 0; }
+    .doc-pill:hover { background: #dbeafe; }
+
+    select.faux {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .chart-wrap {
+      position: relative;
+      height: 120px;
+      margin-top: 8px;
+    }
+    .chart-wrap svg { width: 100%; height: 100%; }
+    .chart-tip {
+      position: absolute;
+      left: 42%;
+      top: 18%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      box-shadow: var(--shadow);
+    }
+    .chart-tip::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -5px;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--blue);
+    }
+
+    /* ИИ-помощник — снизу слева */
+    .ai-dock {
+      position: fixed;
+      left: 88px;
+      bottom: 24px;
+      width: 280px;
+      z-index: 20;
+    }
+    @media (max-width: 768px) {
+      .ai-dock { left: 16px; right: 16px; width: auto; max-width: 320px; }
+    }
+    .ai-float {
+      position: relative;
+      background: linear-gradient(180deg, #ffe8d9 0%, #fff5ed 100%);
+      border: 1px solid rgba(253, 126, 20, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 18px 16px 14px;
+      box-shadow: var(--shadow);
+    }
+    .ai-badge {
+      position: absolute;
+      top: -14px;
+      left: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 18px;
+      border: 3px solid var(--bg);
+      box-shadow: var(--shadow);
+    }
+    .ai-float h4 {
+      margin: 8px 0 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .ai-float p {
+      margin: 0 0 12px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .ai-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .ai-search svg { flex-shrink: 0; opacity: 0.6; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <a class="brand" href="#">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h6"/></svg>
+        </span>
+        ax.files
+      </a>
+      <div class="header-title">Мой профиль</div>
+      <div class="header-actions">
+        <button type="button" class="icon-btn" aria-label="Поиск">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="6"/><path d="M20 20l-3-3"/></svg>
+        </button>
+        <button type="button" class="icon-btn has-dot" aria-label="Уведомления" title="Уведомления">
+          <img src="icon-bell.png" width="20" height="20" alt="" />
+        </button>
+        <button type="button" class="icon-btn" aria-label="Настройки">
+          <img src="icon-settings.png" width="20" height="20" alt="" />
+        </button>
+        <div class="avatar-sm" aria-hidden="true">
+          <img src="icon-profile.png" width="22" height="22" alt="" />
+        </div>
+      </div>
+    </header>
+
+    <aside class="app-rail" aria-label="Разделы">
+      <button type="button" class="rail-btn" title="Главная" aria-label="Главная">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button type="button" class="rail-btn" title="Обучение" aria-label="Обучение">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8"/></svg>
+      </button>
+      <button type="button" class="rail-btn active" title="Профиль" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="8" r="4"/><path d="M4 20v-1a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v1"/></svg>
+      </button>
+      <button type="button" class="rail-btn" title="Обсуждения" aria-label="Обсуждения">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 8a2 2 0 0 0-2-2H6l-3 3v11a2 2 0 0 0 2 2h3"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+      </button>
+      <button type="button" class="rail-btn" title="Настройки" aria-label="Настройки">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+      <div class="rail-spacer"></div>
+      <button type="button" class="rail-btn help" title="Справка" aria-label="Справка">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M9 9a3 3 0 1 1 5.2 2.1c-.4.3-.7.6-.9 1.1-.2.3-.3.7-.3 1.1"/></svg>
+      </button>
+    </aside>
+
+    <main class="app-main">
+      <p class="section-kicker">Карточка профиля</p>
+      <div class="hero-card">
+        <div class="hero-cover" aria-hidden="true"></div>
+        <div class="hero-body">
+          <div class="hero-avatar" aria-hidden="true"></div>
+          <div class="hero-text">
+            <h1 class="profile-name">Добро пожаловать, Анна!</h1>
+            <p class="welcome-line">Иванова Анна · <a href="#">Онбординг</a></p>
+            <p class="sub">Владелец раздела «Compliance» · Дирекция ИБ и комплаенса · ведущий проект «Бета — compliance» · офис: Москва</p>
+            <div class="meta-row">
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                57 человек в команде проектов
+              </span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                В системе с 2023 года
+              </span>
+            </div>
+            <div class="chips">
+              <span class="chip">#152-ФЗ</span>
+              <span class="chip">#доступы</span>
+              <span class="chip">#бета</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <section class="card" aria-labelledby="p-title">
+          <h2 class="panel-title" id="p-title">Мои проекты</h2>
+          <ul class="list">
+            <li>
+              <div class="thumb" aria-hidden="true"></div>
+              <div>
+                <div class="list-title"><a href="#">Бета — compliance</a></div>
+                <div class="list-meta">Владелец контента · 8 документов</div>
+              </div>
+            </li>
+            <li>
+              <div class="thumb" aria-hidden="true"></div>
+              <div>
+                <div class="list-title"><a href="#">Альфа — внедрение CRM</a></div>
+                <div class="list-meta">Участник · 12 документов</div>
+              </div>
+            </li>
+          </ul>
+        </section>
+        <section class="card" aria-labelledby="m-title">
+          <h2 class="panel-title" id="m-title">Материалы и вклад</h2>
+          <ul class="list">
+            <li>
+              <div class="thumb" aria-hidden="true"></div>
+              <div>
+                <div class="list-title"><a href="#">Политика классификации данных</a></div>
+                <div class="list-meta">Актуально · v1.4 · совместное редактирование</div>
+              </div>
+            </li>
+            <li>
+              <div class="thumb" aria-hidden="true"></div>
+              <div>
+                <div class="list-title"><a href="#">Описание API v1</a></div>
+                <div class="list-meta">Комментарии и метрики использования</div>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <p class="steps-title">Геймификация и вклад</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="ico" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <strong>3‑е место в «Регламенты»</strong>
+            <p>1280 баллов за квартал</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="ico" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <strong>Значки «Автор квартала»</strong>
+            <p>Три активных награды за вклад</p>
+          </div>
+        </div>
+        <div class="step-card next">
+          <div class="ico" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <div>
+            <strong>Внутренняя валюта</strong>
+            <p>1 240 единиц — откройте историю начислений</p>
+          </div>
+        </div>
+        <div class="step-card next">
+          <div class="ico" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </div>
+          <div>
+            <strong>Следующий уровень</strong>
+            <p>Закрепите ещё 2 документа в каталоге</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="app-widgets" aria-label="Виджеты">
+      <div class="widgets-inner">
+        <div class="greet">
+          <h2>Доброе утро, Анна Ильина!</h2>
+          <p>Хорошего рабочего дня</p>
+        </div>
+        <div class="card">
+          <div class="widget-head">
+            <h3>Продолжить редактирование</h3>
+            <span class="arrow" aria-hidden="true">→</span>
+          </div>
+          <a class="doc-pill" href="#">Политика классификации данных.docs</a>
+          <a class="doc-pill" href="#">Матрица ролей — черновик</a>
+        </div>
+        <div class="card">
+          <div class="widget-head">
+            <h3>Активность</h3>
+            <select class="faux" aria-label="Период">
+              <option>Текущая неделя</option>
+              <option>Прошлая неделя</option>
+            </select>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-tip">2 Задачи</div>
+            <svg viewBox="0 0 280 100" preserveAspectRatio="none">
+              <line x1="0" y1="99" x2="280" y2="99" stroke="#dee2e6" stroke-width="1"/>
+              <path d="M0 75 L56 60 L112 80 L168 35 L224 50 L280 40" fill="none" stroke="#212529" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="0" y="95" font-size="9" fill="#6c757d">Пн</text>
+              <text x="52" y="95" font-size="9" fill="#6c757d">Вт</text>
+              <text x="104" y="95" font-size="9" fill="#6c757d">Ср</text>
+              <text x="156" y="95" font-size="9" fill="#6c757d">Чт</text>
+              <text x="208" y="95" font-size="9" fill="#6c757d">Пт</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="ai-dock">
+    <div class="ai-float">
+      <div class="ai-badge" aria-hidden="true">?</div>
+      <h4>ИИ‑Помощник</h4>
+      <p>Задайте вопрос по базе знаний или попросите кратко пересказать документ.</p>
+      <div class="ai-search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="6"/><path d="M20 20l-3-3"/></svg>
+        <span>Поиск по базе…</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

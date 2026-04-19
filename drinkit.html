@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#dfe9f7",
+                        "primary-fixed-dim": "#bbc3ff",
+                        "primary-fixed": "#dee0ff",
+                        "outline": "#757686",
+                        "on-secondary-fixed": "#000d5f",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#bbc3ff",
+                        "surface-tint": "#344ddc",
+                        "inverse-on-surface": "#e8f2ff",
+                        "primary": "#0d2fc4",
+                        "on-primary-container": "#d0d4ff",
+                        "outline-variant": "#c5c5d7",
+                        "on-secondary-container": "#001685",
+                        "tertiary": "#1833b9",
+                        "surface-variant": "#d9e3f1",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#131c26",
+                        "secondary": "#4052c9",
+                        "inverse-surface": "#28313c",
+                        "tertiary-container": "#384fd1",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#dfe0ff",
+                        "inverse-primary": "#bbc3ff",
+                        "background": "#f7f9ff",
+                        "surface-container-low": "#edf4ff",
+                        "surface-container-highest": "#d9e3f1",
+                        "on-surface": "#131c26",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#1934ba",
+                        "secondary-container": "#7586ff",
+                        "surface": "#f7f9ff",
+                        "surface-bright": "#f7f9ff",
+                        "on-primary-fixed-variant": "#1030c5",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d1dbe9",
+                        "on-surface-variant": "#444655",
+                        "on-secondary-fixed-variant": "#2437b0",
+                        "tertiary-fixed": "#dee0ff",
+                        "surface-container": "#e5effd",
+                        "on-primary-fixed": "#000e5e",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#334cdb",
+                        "on-tertiary-container": "#d0d4ff",
+                        "secondary-fixed-dim": "#bbc3ff",
+                        "on-tertiary-fixed": "#000f5d",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-fixed selection:text-primary">
+<!-- TopNavBar -->
+<nav class="sticky top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl shadow-sm shadow-blue-900/5">
+<div class="flex justify-between items-center px-8 py-5 max-w-screen-2xl mx-auto">
+<div class="font-['Space_Grotesk'] text-2xl font-black tracking-tighter text-blue-700 dark:text-blue-400 cursor-pointer">Drinkit</div>
+<div class="hidden md:flex gap-10 items-center">
+<a class="font-['Plus_Jakarta_Sans'] font-medium uppercase tracking-widest text-sm text-blue-700 dark:text-blue-400 border-b-2 border-blue-700 dark:border-blue-400 pb-1 hover:scale-105 transition-transform duration-300 ease-out" href="#">Brew</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium uppercase tracking-widest text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors hover:scale-105 transition-transform duration-300 ease-out" href="#">Partnerships</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium uppercase tracking-widest text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors hover:scale-105 transition-transform duration-300 ease-out" href="#">Quality</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium uppercase tracking-widest text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors hover:scale-105 transition-transform duration-300 ease-out" href="#">Locations</a>
+</div>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-bold text-sm tracking-wide hover:scale-105 active:opacity-80 transition-all duration-300">
+                Order Now
+            </button>
+</div>
+</nav>
+<main class="max-w-screen-2xl mx-auto px-8 pt-12 pb-24 space-y-24">
+<!-- Hero Section: Editorial Asymmetry -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-7 space-y-8">
+<h1 class="font-headline text-7xl lg:text-9xl font-bold tracking-tighter text-primary leading-[0.9]">
+                    The New <br/> <span class="text-secondary-container">Standard</span>
+</h1>
+<p class="font-body text-xl lg:text-2xl text-on-surface-variant max-w-xl leading-relaxed">
+                    Engineering the perfect cup through precision temperature control and sustainable direct-trade sourcing.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-10 py-5 bg-primary text-white rounded-full font-bold text-lg hover:scale-105 transition-transform">Explore the Menu</button>
+<button class="px-10 py-5 bg-surface-container-high text-primary rounded-full font-bold text-lg hover:scale-105 transition-transform">Our Process</button>
+</div>
+</div>
+<div class="lg:col-span-5 relative group">
+<div class="absolute -inset-4 bg-primary-container/10 rounded-xl blur-3xl group-hover:bg-primary-container/20 transition-all"></div>
+<img class="relative w-full aspect-[4/5] object-cover rounded-xl shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]" data-alt="Close-up of a high-end espresso machine extraction with rich crema pouring into a ceramic cup, warm moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClj7agcdDlhRKiSmY6BaREp8M44JNanPxEtsow1tYNsfC5e4IFJTN74H5vru34AHweaNx19O-AhVpEvtXMnyVk9ECzqQDddq6pdh7L42RS63cKl4NYMxinjj6A30HO2ONAZgjefjjSAtwZMII02lrhS7X9YFtzXnh1ONQYtj-Q8f_Rz7U4YdwDxPEvzccc0YEnLAkjIfIf_3LRbpsC1OS6GgZWS92-n6apC0c4RKMa21TSltE71z_rkuyNXneTD9W1mhYboUvJAYmT"/>
+</div>
+</section>
+<!-- Stats Grid: Glassmorphism & High-Tech Feel -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="glass-card p-10 rounded-lg border border-white/20 shadow-xl shadow-primary/5 flex flex-col justify-between aspect-square lg:aspect-auto lg:h-64 transition-all hover:-translate-y-2">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="thermometer">thermometer</span>
+<div>
+<div class="text-5xl font-headline font-bold text-primary">93.4°C</div>
+<div class="text-on-surface-variant font-medium tracking-wide uppercase text-xs mt-2">Optimal Extraction</div>
+</div>
+</div>
+<div class="glass-card p-10 rounded-lg border border-white/20 shadow-xl shadow-primary/5 flex flex-col justify-between aspect-square lg:aspect-auto lg:h-64 transition-all hover:-translate-y-2">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="Timer">timer</span>
+<div>
+<div class="text-5xl font-headline font-bold text-primary">28s</div>
+<div class="text-on-surface-variant font-medium tracking-wide uppercase text-xs mt-2">Precision Pour</div>
+</div>
+</div>
+<div class="glass-card p-10 rounded-lg border border-white/20 shadow-xl shadow-primary/5 flex flex-col justify-between aspect-square lg:aspect-auto lg:h-64 transition-all hover:-translate-y-2">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="Filter_vintage">filter_vintage</span>
+<div>
+<div class="text-5xl font-headline font-bold text-primary">100%</div>
+<div class="text-on-surface-variant font-medium tracking-wide uppercase text-xs mt-2">Direct Trade</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid: Content & Imagery Mix -->
+<section class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6">
+<!-- Large Feature -->
+<div class="md:col-span-4 lg:col-span-4 bg-surface-container-low rounded-lg overflow-hidden group relative">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Interior of a modern minimalist coffee shop with light wood, concrete walls, and large windows with bright natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo3ItBDcbUA_ltXq_bo3KDaWWDAVKgvVu5qPu6p7G_-t_R4atTn7zEcmyXamYmx8_FShQxPo2yJwvyb3iWJDkvkAEx42mnQWl0rMLKkOTMtO6seH0Fw-rKxx3do3G0qi8ejWqYTbu1rucwpoSQ07wf4XV0Nfn5Fnh2q4uLQg05GmrkEljgCt95ee4Y5FyDsvHGLH5cMCm5nZN1ivxyJCjHsPLMtm6yrGh5lJrIWkoCeLRF0SPSB7wCkY1gG1I4iD6ew27pKNtl5nwY"/>
+<div class="absolute bottom-0 left-0 p-12 z-20 text-white max-w-lg">
+<span class="bg-primary/90 text-[10px] px-3 py-1 rounded-full uppercase tracking-[0.2em] font-bold">New Location</span>
+<h3 class="font-headline text-5xl font-bold mt-4 leading-tight">Downtown Tech Hub</h3>
+<p class="text-white/80 mt-4 text-lg">Designed for deep work and high-speed connections. Now open in the Arts District.</p>
+</div>
+</div>
+<!-- Small Vertical -->
+<div class="md:col-span-2 lg:col-span-2 glass-card rounded-lg p-10 flex flex-col justify-center space-y-6">
+<h4 class="font-headline text-3xl font-bold text-primary">Partner Program</h4>
+<p class="text-on-surface-variant">We partner with forward-thinking offices to bring Drinkit to your team. Scale your productivity with curated caffeine.</p>
+<a class="flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all" href="#">
+                    Learn more <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<!-- Small Horizontal -->
+<div class="md:col-span-2 lg:col-span-3 bg-primary-container text-on-primary-container rounded-lg p-12 flex items-center justify-between group">
+<div class="max-w-xs">
+<h4 class="font-headline text-3xl font-bold mb-4 leading-tight">The Roastery Journal</h4>
+<p class="opacity-80">Read our latest deep-dive into Ethiopian washing stations and climate resilience.</p>
+</div>
+<div class="hidden sm:block">
+<span class="material-symbols-outlined text-8xl opacity-20 group-hover:rotate-12 transition-transform duration-500">menu_book</span>
+</div>
+</div>
+<!-- Small Image Square -->
+<div class="md:col-span-2 lg:col-span-3 bg-surface-container-highest rounded-lg overflow-hidden group">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" data-alt="Minimalist top down view of a pour over coffee setup with a glass carafe and precise water pouring" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3Ptt3_wkfhKJZCfOxqX_StmdDoLOeWljna_cMLN_gXNvboVXBNQw6650w10Vg1w3kt8tb8U4ianhI3wgirBvWT5NAn_7pSpPDeqopAUFph5YI2NH3I8q_R5vTyo9OQi7YBN0scvp5GfxCyXQfHSo2eM3mYKeWQsjAmrjIyNuOuqWm7SWWIzToZfwI11c90Eru2IRZcGcV_SjHN9wo61uZCvxikaXDXb5wvl062SZytrhc2eeRdprIMtwlEGjCxFaIw6IMzjLsclY3"/>
+</div>
+</section>
+<!-- Newsletter / CTA: Glass Container -->
+<section class="relative rounded-lg overflow-hidden py-24 px-12 text-center bg-primary">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-secondary/50 via-primary to-primary pointer-events-none"></div>
+<div class="relative z-10 max-w-2xl mx-auto space-y-8">
+<h2 class="font-headline text-5xl md:text-6xl font-bold text-white tracking-tight">Stay Wired.</h2>
+<p class="text-white/70 text-xl">Join the inner circle for exclusive roast drops and early access to our brewing tech.</p>
+<div class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+<input class="flex-1 px-8 py-5 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md" placeholder="email@example.com" type="email"/>
+<button class="bg-white text-primary px-10 py-5 rounded-full font-bold hover:scale-105 transition-transform active:scale-95">Subscribe</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-16 px-8 mt-20 bg-slate-50 dark:bg-slate-900">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 max-w-7xl mx-auto">
+<div class="space-y-6">
+<div class="font-['Space_Grotesk'] text-xl font-bold text-blue-700 dark:text-blue-400">Drinkit</div>
+<p class="font-['Plus_Jakarta_Sans'] text-sm tracking-tight text-slate-500 dark:text-slate-400 leading-relaxed max-w-xs">
+                    Defining the intersection of artisan coffee culture and futuristic precision. Based in the heart of the digital city.
+                </p>
+</div>
+<div class="space-y-4">
+<h5 class="text-blue-700 dark:text-blue-500 font-bold uppercase tracking-widest text-xs">Menu</h5>
+<ul class="space-y-3">
+<li><a class="font-['Plus_Jakarta_Sans'] text-sm tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 underline underline-offset-4 transition-all" href="#">Sustainability</a></li>
+<li><a class="font-['Plus_Jakarta_Sans'] text-sm tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 underline underline-offset-4 transition-all" href="#">Careers</a></li>
+<li><a class="font-['Plus_Jakarta_Sans'] text-sm tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 underline underline-offset-4 transition-all" href="#">Wholesale</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="text-blue-700 dark:text-blue-500 font-bold uppercase tracking-widest text-xs">Legal</h5>
+<ul class="space-y-3">
+<li><a class="font-['Plus_Jakarta_Sans'] text-sm tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 underline underline-offset-4 transition-all" href="#">Privacy Policy</a></li>
+<li><a class="font-['Plus_Jakarta_Sans'] text-sm tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 underline underline-offset-4 transition-all" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h5 class="text-blue-700 dark:text-blue-500 font-bold uppercase tracking-widest text-xs">Connect</h5>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="share">share</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="mail">mail</span>
+</a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto pt-16 mt-16 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="font-['Plus_Jakarta_Sans'] text-sm tracking-tight text-slate-500 dark:text-slate-400">© 2024 DRINKIT COFFEE. CRAFTED FOR THE CURIOUS.</span>
+<div class="flex gap-8">
+<span class="material-symbols-outlined text-slate-300" data-icon="coffee">coffee</span>
+<span class="material-symbols-outlined text-slate-300" data-icon="bolt">bolt</span>
+<span class="material-symbols-outlined text-slate-300" data-icon="local_fire_department">local_fire_department</span>
+</div>
+</div>
+</footer>
+</body></html>
