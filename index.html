@@ -658,6 +658,34 @@
       color: var(--muted);
       background: var(--bg);
     }
+    .scheme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .scheme-col {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .scheme-col h3 { margin: 0; font-size: 14px; }
+    .scheme-node {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .scheme-node strong { display: block; margin-bottom: 4px; }
+    .scheme-node ul {
+      margin: 0;
+      padding-left: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
 
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
@@ -882,7 +910,7 @@
 <body>
   <div class="shell">
     <header class="top">
-      <button type="button" class="logo" id="logo-home" aria-label="На главную">AxFiles <span>x Клиент</span></button>
+      <button type="button" class="logo" id="logo-home" aria-label="На главную">AxFiles</button>
       <form class="search-wrap" id="header-search" role="search">
         <input type="search" id="header-q" placeholder="Поиск по всей базе знаний…" aria-label="Запрос" />
         <button type="submit" class="btn">Искать</button>
@@ -894,26 +922,20 @@
         <button type="button" class="icon-slot" id="btn-settings" title="Настройки" aria-label="Настройки">
           <img src="icon-settings.png" width="22" height="22" alt="" decoding="async" />
         </button>
-        <button type="button" class="icon-slot" id="btn-profile-ico" title="Мой профиль" aria-label="Мой профиль">
-          <img src="icon-profile.png" width="22" height="22" alt="" decoding="async" />
-        </button>
       </div>
     </header>
 
     <div class="grid">
       <div id="app-crumbs" class="crumbs app-crumbs" aria-label="Путь по разделу"></div>
       <aside class="nav" aria-label="Основные разделы">
-        <h3>Работа</h3>
         <ul>
           <li><a href="#/dashboard" data-nav-key="dashboard">Главная</a></li>
           <li><a href="#/search" data-nav-key="search">Поиск</a></li>
-          <li><a href="#/documents" data-nav-key="documents">Документы</a></li>
-          <li><a href="#/projects" data-nav-key="projects">Проекты</a></li>
+          <li><a href="#/spaces" data-nav-key="spaces">База знаний</a></li>
+          <li><a href="#/projects" data-nav-key="projects">Мои проекты</a></li>
           <li><a href="#/experts" data-nav-key="experts">Эксперты</a></li>
         </ul>
-        <h3>Организация</h3>
         <ul>
-          <li><a href="#/admin" data-nav-key="admin">Администрирование</a></li>
           <li><a href="#/profile" data-nav-key="profile">Мой профиль</a></li>
         </ul>
       </aside>
@@ -921,20 +943,20 @@
       <div class="main" id="views">
         <div class="view" id="view-dashboard" data-view>
           <div class="card">
-            <h1 class="section-title">Добро пожаловать, Анна</h1>
-            <p class="section-note">Онбординг: 4 из 6 шагов — остались «совместное редактирование» и «напоминания об актуализации».</p>
-            <div class="cta-grid">
-              <a class="cta-card" href="#/search"><strong>Поиск по базе</strong><span>Полнотекст, семантика и фильтры по материалам организации</span></a>
-              <a class="cta-card" href="#/projects"><strong>Проекты</strong><span>Команда, артефакты и привязанные документы KMS</span></a>
-              <a class="cta-card" href="#/experts"><strong>Найти эксперта</strong><span>По навыкам, роли и участию в проектах</span></a>
-              <a class="cta-card" href="#/documents"><strong>Документы</strong><span>Каталог, версии и создание по шаблону</span></a>
-            </div>
+            <h2 class="section-title">Недавно просмотренное</h2>
+            <p style="margin:0"><a href="#/spaces/alpha-strategy">Пространство «Альфа-Банк стратегия»</a></p>
+            <p style="margin:8px 0 0"><a href="#/experts/volkova">Эксперт Ирина Волкова</a></p>
           </div>
           <div class="card">
-            <h2 class="panel-title">Продолжить</h2>
-            <p class="micro">Последний просмотр — возврат в тот же контекст.</p>
-            <p style="margin:0"><a href="#/doc/policy" data-doc-from="dashboard">Политика классификации данных</a> <span class="micro">· проект «Бета — compliance»</span></p>
-            <p style="margin:8px 0 0"><a href="#/projects/alpha">Альфа — внедрение CRM</a> <span class="micro">· 12 документов</span></p>
+            <h2 class="panel-title">Избранное</h2>
+            <p style="margin:0"><a href="#/projects/moscow2030">Проект «Москва 2030»</a></p>
+          </div>
+          <div class="card">
+            <h2 class="panel-title">Лента новостей</h2>
+            <ul class="timeline">
+              <li>Мария Некрасова: опубликован пост о завершении проекта «Лукойл».</li>
+              <li><strong>Рекомендация AI:</strong> изучите кейс «Оптимизация проектного офиса в финансовом контуре» — релевантно вашим подпискам.</li>
+            </ul>
           </div>
         </div>
 
@@ -967,6 +989,145 @@
                 <select class="faux" aria-label="Автор"><option>Все авторы</option><option>Иванова А.</option><option>Петров Д.</option></select>
               </div>
             </details>
+          </div>
+        </div>
+
+        <div class="view" id="view-scheme" data-view>
+          <div class="card">
+            <h2 class="section-title">Блок-схема функционала AxFiles</h2>
+            <p class="section-note">Уровень 1 — разделы, уровень 2 — функциональные блоки, уровень 3 — подфункции. Структура повторяет схему из курсовой.</p>
+            <div class="scheme-grid">
+              <section class="scheme-col" aria-label="Главная">
+                <h3>Главная</h3>
+                <article class="scheme-node">
+                  <strong>Уведомления</strong>
+                  <ul>
+                    <li>обновления документов</li>
+                    <li>напоминания об актуализации</li>
+                    <li>действия с профилем («спасибо»)</li>
+                    <li>запросы доступа и системные уведомления</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Недавние материалы</strong>
+                  <ul>
+                    <li>недавно просмотренные документы</li>
+                    <li>недавно просмотренные пространства и проекты</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Избранное</strong>
+                  <ul>
+                    <li>избранные документы</li>
+                    <li>избранные пространства и проекты</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Лента новостей</strong>
+                  <ul>
+                    <li>публикации подписок (эксперты/пространства/проекты)</li>
+                    <li>общие публикации компании</li>
+                    <li>рекомендованные AI-посты</li>
+                  </ul>
+                </article>
+              </section>
+              <section class="scheme-col" aria-label="Поиск">
+                <h3>Поиск</h3>
+                <article class="scheme-node">
+                  <strong>Поисковая строка</strong>
+                  <ul>
+                    <li>ввод запроса</li>
+                    <li>автоподсказки</li>
+                    <li>недавние запросы</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Результаты поиска</strong>
+                  <ul>
+                    <li>документы, проекты, эксперты, пространства, шаблоны</li>
+                    <li>пустая выдача и обработка ошибки поиска</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Фильтры</strong>
+                  <ul>
+                    <li>теги, тип контента, проект, автор</li>
+                    <li>пространство, уровень доступа, дата обновления</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>AI-поиск</strong>
+                  <ul>
+                    <li>ответ с ссылками на источники</li>
+                    <li>AI-саммари материалов</li>
+                    <li>уточняющий вопрос от AI</li>
+                  </ul>
+                </article>
+              </section>
+              <section class="scheme-col" aria-label="Разделы и карточки">
+                <h3>AxFiles: разделы и карточки</h3>
+                <article class="scheme-node">
+                  <strong>Вкладки сайдбара</strong>
+                  <ul>
+                    <li>база знаний, мои проекты, эксперты, профиль</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Пространства</strong>
+                  <ul>
+                    <li>список практик/направлений</li>
+                    <li>поиск, избранное, подписка, образовательные пространства</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Проекты</strong>
+                  <ul>
+                    <li>список проектов, поиск и фильтры</li>
+                    <li>мои проекты и избранные проекты</li>
+                    <li>карточка проекта: обзор, артефакты, команда, активность</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Эксперты</strong>
+                  <ul>
+                    <li>список и оргструктура экспертов</li>
+                    <li>поиск, фильтры, избранные эксперты</li>
+                    <li>карточка эксперта: профиль, навыки, контакты, проекты, «спасибо»</li>
+                  </ul>
+                </article>
+              </section>
+              <section class="scheme-col" aria-label="Профиль и сквозные функции">
+                <h3>Профиль, контент и сквозные функции</h3>
+                <article class="scheme-node">
+                  <strong>Профиль пользователя</strong>
+                  <ul>
+                    <li>основная информация, фото, о себе, контакты, навыки</li>
+                    <li>мои публикации, подписки, доступы, «спасибо»</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Конкретное пространство</strong>
+                  <ul>
+                    <li>описание, проекты, эксперты, обновления, шаблоны</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Создание контента в проекте</strong>
+                  <ul>
+                    <li>создание документа и загрузка файла</li>
+                    <li>AI-преобразование материалов в артефакты по шаблонам</li>
+                    <li>публикация в базу знаний с тегами</li>
+                  </ul>
+                </article>
+                <article class="scheme-node">
+                  <strong>Вклад и достижения + сквозной функционал</strong>
+                  <ul>
+                    <li>баллы, статус активности, ачивки, магазин</li>
+                    <li>настройки, сквозной поиск, уведомления, светлая/темная тема</li>
+                  </ul>
+                </article>
+              </section>
+            </div>
           </div>
         </div>
 
@@ -1101,7 +1262,7 @@
 
         <div class="view" id="view-projects" data-view>
           <div class="card">
-            <h2 class="section-title">Проекты</h2>
+            <h2 class="section-title">Мои проекты</h2>
             <p class="section-note">Хранение проектных артефактов и привязка документов.</p>
             <div class="search-ai-banner" role="note">
               <img src="icon-ai.png" width="26" height="26" alt="" decoding="async" aria-hidden="true" />
@@ -1150,6 +1311,17 @@
                 </div>
               </article>
             </div>
+            <div style="margin-top:14px">
+              <a class="doc-create" href="#/projects">
+                <img src="icon-new-doc.png" width="28" height="28" alt="" decoding="async" />
+                Создать проект
+              </a>
+              <div class="templates" style="margin-top:10px">
+                <button type="button" class="tpl">Презентация проекта <small>структура статуса и roadmap</small></button>
+                <button type="button" class="tpl">Отчёт по проекту <small>метрики, риски, выводы</small></button>
+                <button type="button" class="tpl">План-график <small>этапы, контрольные точки, владельцы</small></button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1160,6 +1332,61 @@
             <p class="micro" id="project-artifacts"></p>
             <p class="micro">Привязанные документы KMS:</p>
             <ul style="margin:0;padding-left:20px" id="project-docs"></ul>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0" />
+            <h3 class="panel-title">Публикация проекта в базу знаний</h3>
+            <p class="micro">Перед публикацией заполните описание, участников и теги.</p>
+            <div class="filter-row">
+              <span class="lbl">Теги</span>
+              <select class="faux" aria-label="Тег проекта"><option>#стратегия</option><option>#финансы</option><option>#цифровизация</option></select>
+              <select class="faux" aria-label="Участники"><option>Мария Некрасова</option><option>Ирина Волкова</option><option>Алексей Смирнов</option></select>
+            </div>
+            <p class="micro" style="margin-top:10px;margin-bottom:6px">Описание проекта для базы знаний</p>
+            <textarea style="width:100%;min-height:90px;border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit" placeholder="Кратко: цель проекта, результаты, где применять опыт"></textarea>
+            <p style="margin:12px 0 0"><button type="button" class="btn">Опубликовать в базу знаний</button></p>
+          </div>
+        </div>
+
+        <div class="view" id="view-spaces" data-view>
+          <div class="card">
+            <h2 class="section-title">База знаний</h2>
+            <p class="section-note">Список практик и направлений: поиск, избранное, подписка и образовательные пространства.</p>
+            <form class="search-wrap search-wrap-page" id="spaces-search-form" role="search" aria-label="Поиск по базе знаний">
+              <input type="search" id="spaces-search-q" placeholder="Поиск по пространствам и материалам базы знаний…" aria-label="Поиск по базе знаний" autocomplete="off" />
+              <button type="submit" class="btn">Искать</button>
+            </form>
+            <div class="project-grid">
+              <article class="proj-card">
+                <div class="ph" aria-hidden="true"></div>
+                <div class="bd">
+                  <h4>Альфа-Банк стратегия</h4>
+                  <span class="badge-pill ok">подписка активна</span>
+                  <p class="micro">Материалы по стратегии, шаблоны проектных публикаций и экспертные разборы.</p>
+                  <a href="#/spaces/alpha-strategy">Открыть пространство →</a>
+                </div>
+              </article>
+              <article class="proj-card">
+                <div class="ph" aria-hidden="true"></div>
+                <div class="bd">
+                  <h4>CRM и продажи</h4>
+                  <span class="badge-pill">образовательное</span>
+                  <p class="micro">База практик внедрения, шаблоны материалов и библиотека кейсов.</p>
+                  <a href="#/spaces/crm">Открыть пространство →</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-space" data-view>
+          <div class="card">
+            <h2 class="section-title" id="space-title">Пространство</h2>
+            <p class="section-note" id="space-desc"></p>
+            <p class="micro"><strong>Проекты в пространстве:</strong></p>
+            <ul style="margin:0 0 10px;padding-left:20px" id="space-projects"></ul>
+            <p class="micro"><strong>Эксперты:</strong></p>
+            <ul style="margin:0 0 10px;padding-left:20px" id="space-experts"></ul>
+            <p class="micro"><strong>Шаблоны и последние обновления:</strong></p>
+            <ul style="margin:0;padding-left:20px" id="space-updates"></ul>
           </div>
         </div>
 
@@ -1180,6 +1407,35 @@
             <p class="micro">Документ открывается в редакторе; доступны совместное редактирование, вложения и предпросмотр без скачивания.</p>
             <p style="margin:0"><a href="#/doc/api">Открыть документ →</a></p>
             <p style="margin-top:12px"><button type="button" class="btn secondary" id="wizard-back">Выбрать другой шаблон</button></p>
+            <p class="micro" style="margin-bottom:0">Далее: AI-преобразование материалов в артефакты и публикация в базу знаний с тегами/доступами.</p>
+          </div>
+        </div>
+
+        <div class="view" id="view-achievements" data-view>
+          <div class="card">
+            <h2 class="section-title">Вклад и достижения</h2>
+            <p class="section-note">Мой прогресс, уровень активности, ачивки и магазин товаров за баллы.</p>
+            <div class="gamify">
+              <div class="gm-card gm-accent-blue">
+                <div class="gm-label">Мой прогресс</div>
+                <div><strong>1280 баллов</strong> за квартал · +140 за неделю</div>
+                <div class="bar"><div class="bar-fill"></div></div>
+              </div>
+              <div class="gm-card gm-accent-purple">
+                <div class="gm-label">Уровень активности</div>
+                <div>Статус: <strong>Эксперт-практик</strong></div>
+                <div class="badges">
+                  <div class="badge b1" title="Автор квартала"></div>
+                  <div class="badge b2" title="10 согласованных документов"></div>
+                  <div class="badge b3" title="Ментор"></div>
+                </div>
+              </div>
+              <div class="gm-card gm-accent-orange">
+                <div class="gm-label">Магазин</div>
+                <div class="currency">1 240 <small>баллов</small></div>
+                <p class="list-meta" style="margin-top:8px;margin-bottom:0"><a href="#/achievements">Открыть витрину наград</a></p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1275,41 +1531,31 @@
           </div>
         </div>
 
-        <div class="view" id="view-admin" data-view>
+        <div class="view" id="view-settings" data-view>
           <div class="card">
-            <h2 class="section-title">Администрирование KMS</h2>
+            <h2 class="section-title">Настройки и сквозной функционал</h2>
             <div class="admin-tabs" role="tablist">
-              <button type="button" class="is-on" data-tab="access">Роли и видимость</button>
+              <button type="button" class="is-on" data-tab="access">Доступы</button>
               <button type="button" data-tab="sso">SSO и интеграции</button>
-              <button type="button" data-tab="ai">ИИ и индексация</button>
-              <button type="button" data-tab="infra">Инфраструктура</button>
             </div>
             <div class="admin-panel is-on" id="tab-access">
-              <h3 class="panel-title">Ролевая модель и скрытые материалы</h3>
+              <h3 class="panel-title">Уровни доступа и запросы</h3>
               <table class="data">
                 <thead>
-                  <tr><th>Роль</th><th>Скрытые материалы</th><th>Админ раздела</th></tr>
+                  <tr><th>Уровень доступа</th><th>Запрос пользователя</th><th>Статус</th></tr>
                 </thead>
                 <tbody>
-                  <tr><td>Сотрудник</td><td><span class="badge-pill hide">нет</span></td><td>—</td></tr>
-                  <tr><td>Эксперт раздела</td><td><span class="badge-pill ok">по назначению</span></td><td>✓</td></tr>
-                  <tr><td>Администратор KMS</td><td><span class="badge-pill ok">полная</span></td><td>✓</td></tr>
+                  <tr><td>Базовый (чтение)</td><td>Доступ в пространство «Альфа-Банк стратегия»</td><td><span class="badge-pill ok">Одобрен</span></td></tr>
+                  <tr><td>Расширенный (редактирование)</td><td>Публикация материалов в проект «Москва 2030»</td><td><span class="badge-pill warn">На проверке</span></td></tr>
+                  <tr><td>Админ раздела</td><td>Запрос от руководителя практики</td><td><span class="badge-pill">Ожидает согласования</span></td></tr>
                 </tbody>
               </table>
-              <p class="micro">Документ «Закрытые риски (юридический)» скрыт от роли «Сотрудник», виден юристам.</p>
+              <p class="micro">Прилетевшие вам запросы: 2 новых на согласование доступа (проект «Москва 2030», пространство «Стратегия»).</p>
             </div>
             <div class="admin-panel" id="tab-sso">
               <h3 class="panel-title">Единый вход и внешние системы</h3>
               <p class="micro"><span class="badge-pill ok">SAML 2.0</span> <span class="badge-pill" style="margin-left:6px">OIDC</span> — корпоративный IdP, JIT роли.</p>
               <p class="micro">Интеграции: Microsoft 365, корпоративный мессенджер, S3-совместимое хранилище, webhooks уведомлений.</p>
-            </div>
-            <div class="admin-panel" id="tab-ai">
-              <h3 class="panel-title">Политика ИИ в организации</h3>
-              <p class="micro">Включены: AI-поиск, саммари, ассистент с цитированием. Индексируются только разрешённые пространства; исключения по меткам конфиденциальности.</p>
-            </div>
-            <div class="admin-panel" id="tab-infra">
-              <h3 class="panel-title">Размещение данных</h3>
-              <p class="micro"><span class="badge-pill ru">152-ФЗ</span> <span class="badge-pill ru" style="margin-left:6px">ЦОД РФ</span> — резервирование, шифрование, журналы доступа.</p>
             </div>
           </div>
         </div>
@@ -1331,6 +1577,12 @@
             </div>
           </div>
           <div class="two-col">
+            <section class="card" aria-labelledby="profile-contacts-title">
+              <h2 class="panel-title" id="profile-contacts-title">Контакты</h2>
+              <p class="micro" style="margin:0">Email: ivanova@axfiles.ru</p>
+              <p class="micro" style="margin:6px 0 0">Telegram: @ivanova_ann</p>
+              <p class="micro" style="margin:6px 0 0">Телефон: +7 (900) 000-00-00</p>
+            </section>
             <section class="card" aria-labelledby="profile-projects-title">
               <h2 class="panel-title" id="profile-projects-title">Мои проекты</h2>
               <ul class="list">
@@ -1350,37 +1602,65 @@
                 </li>
               </ul>
             </section>
-            <section class="card" aria-labelledby="profile-materials-title">
-              <h2 class="panel-title" id="profile-materials-title">Материалы и вклад</h2>
+            <section class="card" aria-labelledby="profile-publications-title">
+              <h2 class="panel-title" id="profile-publications-title">Мои публикации</h2>
               <ul class="list">
                 <li>
                   <div class="thumb" aria-hidden="true"></div>
                   <div class="list-body">
                     <div class="list-title"><a href="#/doc/policy" data-doc-from="profile">Политика классификации данных</a></div>
-                    <div class="list-meta">Статус актуальности · v1.4 · совместное редактирование</div>
+                    <div class="list-meta">Опубликовано 17.04 · 126 просмотров</div>
                   </div>
                 </li>
                 <li>
                   <div class="thumb" aria-hidden="true"></div>
                   <div class="list-body">
-                    <div class="list-title"><a href="#/doc/api" data-doc-from="profile">Описание API v1</a></div>
-                    <div class="list-meta">Комментарии / оценки · метрики использования</div>
+                    <div class="list-title"><a href="#/projects/beta">Отчёт по проекту «Бета — compliance»</a></div>
+                    <div class="list-meta">Опубликовано 12.04 · 89 просмотров</div>
                   </div>
                 </li>
               </ul>
             </section>
+            <section class="card" aria-labelledby="profile-subscriptions-title">
+              <h2 class="panel-title" id="profile-subscriptions-title">Мои подписки</h2>
+              <ul class="list">
+                <li>
+                  <div class="thumb" aria-hidden="true"></div>
+                  <div class="list-body">
+                    <div class="list-title"><a href="#/spaces/alpha-strategy">Пространство «Альфа-Банк стратегия»</a></div>
+                    <div class="list-meta">обновления и шаблоны</div>
+                  </div>
+                </li>
+                <li>
+                  <div class="thumb" aria-hidden="true"></div>
+                  <div class="list-body">
+                    <div class="list-title"><a href="#/experts/petrov">Эксперт Петров Дмитрий</a></div>
+                    <div class="list-meta">публикации и рекомендации</div>
+                  </div>
+                </li>
+              </ul>
+            </section>
+            <section class="card" aria-labelledby="profile-thanks-title">
+              <h2 class="panel-title" id="profile-thanks-title">Спасибо</h2>
+              <p class="section-note">Коллеги сказали спасибо: <strong>24 раза</strong>.</p>
+              <ul class="timeline">
+                <li>Мария Некрасова — за помощь в публикации итогов проекта «Лукойл».</li>
+                <li>Ирина Волкова — за методику по тегированию материалов стратегии.</li>
+                <li>Алексей Смирнов — за быстрый ревью карточки проекта «Москва 2030».</li>
+              </ul>
+            </section>
           </div>
           <div class="card">
-            <h2 class="panel-title">Геймификация</h2>
-            <p class="section-note">Рейтинг авторов, значки за вклад и внутренняя валюта мотивации.</p>
+            <h2 class="panel-title">Мой прогресс</h2>
+            <p class="section-note">Ачивки, внутренняя валюта, магазин товаров за ачивки и уровень активности.</p>
             <div class="gamify">
               <div class="gm-card gm-accent-blue">
-                <div class="gm-label">Рейтинг автора</div>
-                <div><strong>3‑е место</strong> в разделе «Регламенты», 1280 баллов за квартал</div>
+                <div class="gm-label">Уровень активности</div>
+                <div><strong>Эксперт-практик</strong> · 1280 баллов за квартал</div>
                 <div class="bar"><div class="bar-fill"></div></div>
               </div>
               <div class="gm-card gm-accent-purple">
-                <div class="gm-label">Значки за вклад</div>
+                <div class="gm-label">Ачивки</div>
                 <div>«Автор квартала», «10 согласованных документов», «Ментор онбординга»</div>
                 <div class="badges">
                   <div class="badge b1" title="Синий акцент"></div>
@@ -1392,7 +1672,7 @@
               <div class="gm-card gm-accent-orange">
                 <div class="gm-label">Внутренняя валюта</div>
                 <div class="currency">1 240 <small>единиц</small></div>
-                <p class="list-meta" style="margin-top:8px;margin-bottom:0"><a href="#/dashboard">История начислений</a></p>
+                <p class="list-meta" style="margin-top:8px;margin-bottom:0"><a href="#/achievements">Магазин товаров за ачивки</a></p>
               </div>
             </div>
           </div>
@@ -1495,6 +1775,49 @@
         { href: "#/doc/policy", text: "Политика классификации данных" },
         { href: "#/doc/policy", text: "Регламент доступа к ПДн" }
       ]
+    },
+    moscow2030: {
+      title: "Москва 2030",
+      desc: "Городская программа цифровой трансформации и проектного управления.",
+      artifacts: "Артефакты: паспорт программы, дорожная карта, KPI, реестр инициатив.",
+      docs: [
+        { href: "#/search/results", text: "Публикации проекта в базе знаний" },
+        { href: "#/doc/presentation", text: "Презентация результатов этапа" }
+      ]
+    }
+  };
+
+  var SPACES = {
+    "alpha-strategy": {
+      title: "Альфа-Банк стратегия",
+      desc: "Пространство стратегических материалов, практик и шаблонов по ключевым инициативам.",
+      projects: [
+        { href: "#/projects/moscow2030", text: "Москва 2030" },
+        { href: "#/projects/alpha", text: "Альфа — внедрение CRM" }
+      ],
+      experts: [
+        { href: "#/experts/volkova", text: "Ирина Волкова" },
+        { href: "#/experts/petrov", text: "Петров Дмитрий" }
+      ],
+      updates: [
+        "Обновлён шаблон «План стратегической инициативы»",
+        "Опубликованы рекомендации AI по приоритизации backlog",
+        "Добавлен разбор кейса по проекту «Москва 2030»"
+      ]
+    },
+    crm: {
+      title: "CRM и продажи",
+      desc: "Пространство практик внедрения CRM, шаблонов проектных артефактов и кейсов.",
+      projects: [
+        { href: "#/projects/alpha", text: "Альфа — внедрение CRM" }
+      ],
+      experts: [
+        { href: "#/experts/petrov", text: "Петров Дмитрий" }
+      ],
+      updates: [
+        "Новый шаблон отчёта по спринту",
+        "Собран FAQ по интеграции API в CRM"
+      ]
     }
   };
 
@@ -1510,6 +1833,12 @@
       role: "Архитектор данных",
       chips: ["#odata", "#API", "Альфа", "Бета"],
       bio: "Проектирование интеграций и публичных контрактов API; ментор онбординга для разработчиков."
+    },
+    volkova: {
+      name: "Ирина Волкова",
+      role: "Эксперт по стратегии и трансформации",
+      chips: ["#стратегия", "#портфель", "Москва 2030"],
+      bio: "Курирует стратегические инициативы и методологию публикации проектного опыта в базу знаний."
     }
   };
 
@@ -1527,7 +1856,7 @@
     } else if (from === "profile") {
       setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/profile">Мой профиль</a> / <span>' + escapeHtml(d.title) + "</span>");
     } else if (from === "documents") {
-      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/documents">Документы</a> / <span>' + escapeHtml(d.title) + "</span>");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/spaces">База знаний</a> / <span>' + escapeHtml(d.title) + "</span>");
     } else {
       setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/search">Поиск</a> / <a href="#/search/results">Результаты</a> / <span>' + escapeHtml(d.title) + "</span>");
     }
@@ -1561,7 +1890,7 @@
   function renderProject(pid) {
     var p = PROJECTS[pid];
     if (!p) return;
-    setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/projects">Проекты</a> / <span>' + escapeHtml(p.title) + "</span>");
+    setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/projects">Мои проекты</a> / <span>' + escapeHtml(p.title) + "</span>");
     document.getElementById("project-title").textContent = p.title;
     document.getElementById("project-desc").textContent = p.desc;
     document.getElementById("project-artifacts").textContent = p.artifacts;
@@ -1591,6 +1920,38 @@
     });
   }
 
+  function renderSpace(sid) {
+    var s = SPACES[sid];
+    if (!s) return;
+    setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/spaces">База знаний</a> / <span>' + escapeHtml(s.title) + "</span>");
+    document.getElementById("space-title").textContent = s.title;
+    document.getElementById("space-desc").textContent = s.desc;
+
+    var p = document.getElementById("space-projects");
+    p.innerHTML = "";
+    s.projects.forEach(function (item) {
+      var li = document.createElement("li");
+      li.innerHTML = '<a href="' + item.href + '">' + escapeHtml(item.text) + "</a>";
+      p.appendChild(li);
+    });
+
+    var e = document.getElementById("space-experts");
+    e.innerHTML = "";
+    s.experts.forEach(function (item) {
+      var li = document.createElement("li");
+      li.innerHTML = '<a href="' + item.href + '">' + escapeHtml(item.text) + "</a>";
+      e.appendChild(li);
+    });
+
+    var u = document.getElementById("space-updates");
+    u.innerHTML = "";
+    s.updates.forEach(function (line) {
+      var li = document.createElement("li");
+      li.textContent = line;
+      u.appendChild(li);
+    });
+  }
+
   function navActive(key) {
     navLinks.forEach(function (a) {
       a.classList.toggle("active", a.getAttribute("data-nav-key") === key);
@@ -1610,7 +1971,8 @@
     global: "",
     documents: "документы",
     projects: "проекты",
-    experts: "эксперты"
+    experts: "эксперты",
+    spaces: "пространства"
   };
 
   function getSelectFiltersSummary(root) {
@@ -1658,7 +2020,7 @@
     if (a === "dashboard" || a === "") {
       showView("dashboard");
       navActive("dashboard");
-      setCrumbs('<span>Главная</span>');
+      setCrumbs("");
       document.title = "AxFiles — главная";
       return;
     }
@@ -1708,13 +2070,27 @@
       document.title = "AxFiles — проект";
       return;
     }
+    if (a === "spaces" && b) {
+      showView("space");
+      navActive("spaces");
+      renderSpace(b);
+      document.title = "AxFiles — пространство";
+      return;
+    }
+    if (a === "spaces") {
+      showView("spaces");
+      navActive("spaces");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>База знаний</span>');
+      document.title = "AxFiles — база знаний";
+      return;
+    }
     if (a === "projects") {
       showView("projects");
       navActive("projects");
-      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Проекты</span>');
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Мои проекты</span>');
       var prq = document.getElementById("projects-search-q");
       if (prq && headerQ) prq.value = headerQ.value;
-      document.title = "AxFiles — проекты";
+      document.title = "AxFiles — мои проекты";
       return;
     }
     if (a === "documents") {
@@ -1728,8 +2104,8 @@
     }
     if (a === "content" && b === "new") {
       showView("content-new");
-      navActive("documents");
-      setCrumbs('<a href="#/dashboard">Главная</a> / <a href="#/documents">Документы</a> / <span>Создать</span>');
+      navActive("content");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Создание контента</span>');
       document.title = "AxFiles — создать";
       document.getElementById("wizard-step1").style.display = "block";
       document.getElementById("wizard-step2").style.display = "none";
@@ -1758,11 +2134,18 @@
       document.title = "AxFiles — уведомления";
       return;
     }
-    if (a === "admin") {
-      showView("admin");
-      navActive("admin");
-      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Администрирование</span>');
-      document.title = "AxFiles — администрирование";
+    if (a === "achievements") {
+      showView("achievements");
+      navActive("achievements");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Вклад и достижения</span>');
+      document.title = "AxFiles — вклад и достижения";
+      return;
+    }
+    if (a === "settings" || a === "admin") {
+      showView("settings");
+      navActive("settings");
+      setCrumbs('<a href="#/dashboard">Главная</a> / <span>Настройки</span>');
+      document.title = "AxFiles — настройки";
       return;
     }
     if (a === "profile") {
@@ -1824,6 +2207,16 @@
     location.hash = "#/search/results";
   });
 
+  document.getElementById("spaces-search-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var sq = document.getElementById("spaces-search-q");
+    var v = sq ? sq.value.trim() : "";
+    headerQ.value = v;
+    if (pageQ) pageQ.value = v;
+    setSearchContext("spaces", document.querySelector("#view-spaces .card"));
+    location.hash = "#/search/results";
+  });
+
   document.getElementById("logo-home").addEventListener("click", function () {
     location.hash = "#/dashboard";
   });
@@ -1839,11 +2232,7 @@
   });
 
   document.getElementById("btn-settings").addEventListener("click", function () {
-    location.hash = "#/admin";
-  });
-
-  document.getElementById("btn-profile-ico").addEventListener("click", function () {
-    location.hash = "#/profile";
+    location.hash = "#/settings";
   });
 
   document.getElementById("views").addEventListener("click", function (ev) {
